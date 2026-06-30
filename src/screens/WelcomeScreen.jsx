@@ -1,6 +1,6 @@
 import {Stack, Box, Typography, Button, Link} from "@mui/material";
 import logoImage from "../assets/images/logo.png";
-import FullScreenButton from "../components/FullScreenButton";
+import FullScreenButton from "../components/FullscreenButton";
 
 export default function WelcomeScreen() {
   return (
