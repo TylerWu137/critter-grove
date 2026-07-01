@@ -1,8 +1,11 @@
 import {Stack, Box, Typography, Button, Link} from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import logoImage from "../assets/images/logo.png";
 import SplashscreenSkeleton from "../components/SplashscreenSkeleton";
 
 export default function WelcomeScreen() {
+  const navigate = useNavigate();
+
   return (
     <SplashscreenSkeleton
       leftContent={
@@ -31,6 +34,7 @@ export default function WelcomeScreen() {
           <Stack spacing={1} sx={{alignItems: "center", width: "100%"}}>
             <Button
               variant="contained"
+              onClick={() => navigate("/login")}
               sx={{ 
                 fontSize: 20,
                 width: "40%",
