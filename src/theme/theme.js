@@ -13,7 +13,7 @@ const theme = createTheme({
     h2: {
       fontFamily: '"Fredoka One", sans-serif',
       fontWeight: 400,
-      fontSize: "2rem"
+      fontSize: "2.5rem"
     },
 
     body1: {
@@ -32,6 +32,20 @@ const theme = createTheme({
       fontFamily: '"Fredoka", sans-serif',
       fontWeight: 200,
       textTransform: "none", // Prevents ALL CAPS buttons
+    },
+  },
+
+  components: {
+    MuiTextField: {
+      variants: [
+        {
+          props: { variant: "userAccount" },
+          style: {
+            backgroundColor: "var(--green)",
+            borderRadius: 40,
+          },
+        },
+      ],
     },
   },
 });

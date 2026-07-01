@@ -14,7 +14,7 @@ export default function SplashscreenSkeleton({
         {/* welcome info */}
         <Stack
             direction="row"
-            spacing={10}
+            spacing={30}
             sx={{
             flex: 4.5,
             py: 10,

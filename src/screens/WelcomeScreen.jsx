@@ -14,7 +14,7 @@ export default function WelcomeScreen() {
           src
           alt="logo"
           sx={{
-            flex: 4,
+            flex: 1,
             backgroundColor: "var(--cream)"
           }}
         />
@@ -25,7 +25,7 @@ export default function WelcomeScreen() {
           spacing={4}
           sx={{
             alignItems: "flex-start",
-            flex: 4
+            flex: 1
           }}
         >
           <Typography variant="h1" sx={{color:"var(--brown)"}}>Description</Typography>
@@ -44,7 +44,7 @@ export default function WelcomeScreen() {
             >Begin</Button>
             <Stack direction="row" spacing={0.5}>
               <Typography variant="caption" sx={{color: "var(--cream)"}}>Don't have an account?</Typography>
-              <Link href="#" variant="caption" sx={{color: "var(--cream)", textDecorationColor: "inherit"}}>Sign Up!</Link>
+              <Link href="/signup" variant="caption" sx={{color: "var(--cream)", textDecorationColor: "inherit"}}>Sign Up!</Link>
             </Stack>
           </Stack>
         </Stack>
