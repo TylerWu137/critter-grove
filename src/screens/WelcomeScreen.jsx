@@ -46,7 +46,7 @@ export default function WelcomeScreen() {
             >Begin</Button>
             <Stack direction="row" spacing={0.5}>
               <Typography variant="caption" sx={{color: "var(--cream)"}}>Don't have an account?</Typography>
-              <Link component={RouterLink} to="/signup" variant="caption" sx={{color: "var(--cream)", textDecorationColor: "inherit"}}>Sign Up!</Link>
+              <Link component="button" onClick={() => navigate("/signup")} variant="caption" sx={{color: "var(--cream)", textDecorationColor: "inherit"}}>Sign Up!</Link>
             </Stack>
           </Stack>
         </Stack>
