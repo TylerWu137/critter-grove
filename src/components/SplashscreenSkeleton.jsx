@@ -9,14 +9,14 @@ export default function SplashscreenSkeleton({
   return (
     <Stack sx={{ height: "100vh",  backgroundColor: "var(--cream)"}}>
         {/* empty top header */}
-        <Box sx={{ flex: 2, display: "flex", justifyContent: "right"}}><FullscreenButton/></Box>
+        <Box sx={{ flex: 1, display: "flex", justifyContent: "right"}}><FullscreenButton/></Box>
 
         {/* welcome info */}
         <Stack
             direction="row"
             spacing={30}
             sx={{
-            flex: 4.5,
+            flex: 3,
             py: 10,
             px: 20,
             backgroundColor: "var(--green)"
@@ -29,7 +29,7 @@ export default function SplashscreenSkeleton({
         {/* critter animation */}
         <Box
             sx={{
-            flex: 2,
+            flex: 1,
             display: "flex",
             justifyContent: "center",
             alignItems: "center",

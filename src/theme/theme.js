@@ -36,16 +36,21 @@ const theme = createTheme({
   },
 
   components: {
-    MuiTextField: {
-      variants: [
-        {
-          props: { variant: "userAccount" },
-          style: {
-            backgroundColor: "var(--green)",
-            borderRadius: 40,
-          },
+    MuiButton: {
+      defaultProps: {
+        variant: "contained",
+        disableElevation: true,
+      },
+
+      styleOverrides: {
+        root: {
+          borderRadius: 16,
+          textTransform: "none",
+          fontSize: "1.3rem",
+          color: "var(--cream)",
+          backgroundColor: "var(--brown)"
         },
-      ],
+      },
     },
   },
 });
