@@ -1,6 +1,5 @@
 import {Stack, Box, Typography, Button, Link} from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { Link as RouterLink } from "react-router-dom";
 
 import logoImage from "../assets/images/logo.png";
 import SplashscreenSkeleton from "../components/SplashscreenSkeleton";
