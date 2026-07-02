@@ -1,5 +1,7 @@
 import {Stack, Box, Typography, Button, Link} from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
+
 import logoImage from "../assets/images/logo.png";
 import SplashscreenSkeleton from "../components/SplashscreenSkeleton";
 
@@ -44,7 +46,7 @@ export default function WelcomeScreen() {
             >Begin</Button>
             <Stack direction="row" spacing={0.5}>
               <Typography variant="caption" sx={{color: "var(--cream)"}}>Don't have an account?</Typography>
-              <Link href="/signup" variant="caption" sx={{color: "var(--cream)", textDecorationColor: "inherit"}}>Sign Up!</Link>
+              <Link component={RouterLink} to="/signup" variant="caption" sx={{color: "var(--cream)", textDecorationColor: "inherit"}}>Sign Up!</Link>
             </Stack>
           </Stack>
         </Stack>
