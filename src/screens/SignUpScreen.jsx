@@ -42,7 +42,7 @@ export default function SignUpScreen() {
                   borderRight: "none",
                 },
 
-                "& hover": {
+                "&:hover": {
                   borderColor: "var(--brown)",
                   backgroundColor: "var(--cream)"
                 },
