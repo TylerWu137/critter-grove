@@ -30,6 +30,8 @@ export default function SignUpScreen() {
               if (newValue !== null) setValue(newValue);
             }}
             sx={{
+              borderRadius: 4,
+              overflow: "hidden",
               "& .MuiToggleButton-root": {
                 backgroundColor: "var(--cream)",
                 color: "var(--brown)",
@@ -40,6 +42,11 @@ export default function SignUpScreen() {
                   borderBottom: "2px solid var(--brown)",
                   borderLeft: "none",
                   borderRight: "none",
+                },
+
+                "&.Mui-selected:hover": {
+                  borderColor: "var(--brown)",
+                  backgroundColor: "var(--cream)"
                 },
 
                 "&:hover": {

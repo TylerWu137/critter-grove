@@ -16,6 +16,12 @@ const theme = createTheme({
       fontSize: "2.5rem"
     },
 
+    h3: {
+      fontFamily: '"Fredoka One", sans-serif',
+      fontWeight: 300,
+      fontSize: "1.5rem"
+    },
+
     body1: {
       fontFamily: '"Nunito", sans-serif',
       fontWeight: 300,
