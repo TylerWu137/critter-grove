@@ -22,6 +22,12 @@ const theme = createTheme({
       fontSize: "1.5rem"
     },
 
+    h4: {
+      fontFamily: '"Fredoka", sans-serif',
+      fontWeight: 550,
+      fontSize: "1.1rem"
+    },
+
     body1: {
       fontFamily: '"Nunito", sans-serif',
       fontWeight: 300,
@@ -57,6 +63,29 @@ const theme = createTheme({
           backgroundColor: "var(--brown)"
         },
       },
+      variants: [
+        {
+          props: { variant: "menu" },
+          style: {
+            backgroundColor: "var(--cream)",
+            color: "var(--brown)",
+            border: "2px solid var(--brown)",
+            borderRadius: 8,
+            fontSize: "1.3rem",
+          },
+        },
+        {
+          props: { variant: "menu2" },
+          style: {
+            backgroundColor: "var(--cream)",
+            color: "var(--brown)",
+            border: "2px solid var(--brown)",
+            borderRadius: 8,
+            fontSize: "1rem",
+            whiteSpace: "nowrap",
+          },
+        },
+      ],
     },
   },
 });

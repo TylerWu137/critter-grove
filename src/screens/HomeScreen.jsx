@@ -9,7 +9,7 @@ import NavBar from "../components/NavBar";
 
 export default function HomeScreen() {
   return (
-    <Box sx={{pt: 4, pb: 2, pl: 4, pr: 4, height: "1", backgroundColor: "var(--green)"}}>
+    <Box sx={{pt: 4, pb: 2, pl: 4, pr: 4, height: "100%", boxSizing: "border-box", backgroundColor: "var(--green)"}}>
       <Stack sx={{height: "1"}}>
         <Stack direction="row" sx={{flex: 2}}>
           <UserProfile username={"Little Dragon"} currentXp={80} xpForNextLevel={100} level={18}/>
