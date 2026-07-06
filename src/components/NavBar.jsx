@@ -2,7 +2,7 @@ import {Stack, Box, Collapse, Button, Typography} from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function NavBar() {
+export default function NavBar({sx, activePanel, setActivePanel}) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -16,13 +16,23 @@ export default function NavBar() {
     </Button>
   );
 
+  const NavPanelButton = (string, section) => (
+    <Button
+      variant="menu2"
+      sx={{height:"100%"}}
+      onClick={() => {setActivePanel(section); setOpen(!open);}}
+    >
+      <Typography variant="h4">{string}</Typography>
+    </Button>
+  );
+
   return (
-    <Stack spacing={2} direction="row" alignItems="center">
+    <Stack spacing={2} direction="row" alignItems="center" sx={sx}>
       <Box sx={{flex:1}}/>
       <Collapse orientation="horizontal" in={open}>
         <Stack spacing={2} direction="row" alignItems="center" sx={{height:"100%"}}>
-          {NavButton("\u2009Critters\u2009", "/critters")}
-          {NavButton("\u2009\u2009\u2009Shop\u2009\u2009\u2009", "/shop")}
+          {NavPanelButton("\u2009Critters\u2009", "critters")}
+          {NavPanelButton("\u2009\u2009\u2009Shop\u2009\u2009\u2009", "shop")}
           {NavButton("\u2009Settings\u2009", "/settings")}
         </Stack>
       </Collapse>
