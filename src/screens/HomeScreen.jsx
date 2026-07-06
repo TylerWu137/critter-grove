@@ -13,32 +13,86 @@ export default function HomeScreen() {
   const [activePanel, setActivePanel] = useState(null);
 
   return (
-    <Box sx={{pt: 4, pb: 2, pl: 4, pr: 4, height: "100%", boxSizing: "border-box", backgroundColor: "var(--green)"}}>
-      <Stack direction="row" sx={{height: "1"}}>
-        <Stack sx={{height: "1", width: "1"}}>
-          <Stack direction="row" sx={{flex: 2}}>
-            <UserProfile username={"Little Dragon"} currentXp={80} xpForNextLevel={100} level={18}/>
-            <Box sx={{flex: 1}}/>
-            <Currencies acornAmt={"125"} treatAmt={"27,232,293"} flowerAmt={"8"} activePanel={activePanel} />
+    <Box sx={{ height: "100%", width: "100%", backgroundColor: "var(--green)"}}>
+      <Stack
+        direction="row"
+        sx={{
+          height: "100%",
+          width: "100%",
+        }}
+      >
+        <Box
+          sx={{
+            pt: 4,
+            pb: 2,
+            pl: 4,
+            pr: 4,
+            height: "100%",
+            flex: 1,
+            boxSizing: "border-box",
+          }}
+        >
+          <Stack sx={{ height: "100%" }}>
+            <Stack direction="row" sx={{ flex: 2 }}>
+              <UserProfile
+                username="Little Dragon"
+                currentXp={80}
+                xpForNextLevel={100}
+                level={18}
+              />
+              <Box sx={{ flex: 1 }} />
+              <Currencies
+                acornAmt="125"
+                treatAmt="27,232,293"
+                flowerAmt="8"
+                activePanel={activePanel}
+              />
+            </Stack>
+
+            <TodayUpdates sx={{ flex: 6 }} />
+
+            <NavBar
+              activePanel={activePanel}
+              setActivePanel={setActivePanel}
+            />
           </Stack>
-          <TodayUpdates sx={{flex: 6}}/>
-          <NavBar activePanel={activePanel} setActivePanel={setActivePanel} />
-        </Stack>
+        </Box>
+
         <Collapse
           in={activePanel === "critters"}
           orientation="horizontal"
           mountOnEnter
           unmountOnExit
+          sx={{
+            height: "100%",
+          }}
         >
-          <CrittersPanel activePanel={activePanel} setActivePanel={setActivePanel} />
+          <Box
+            sx={{
+              height: "100%",
+              width: "40vw",
+            }}
+          >
+            <CrittersPanel setActivePanel={setActivePanel} />
+          </Box>
         </Collapse>
         <Collapse
           in={activePanel === "shop"}
           orientation="horizontal"
           mountOnEnter
           unmountOnExit
+          sx={{
+            height: "100%",
+          }}
         >
-          <ShopPanel activePanel={activePanel} setActivePanel={setActivePanel} />
+          <Box
+            sx={{
+              height: "100%",
+              width: "40vw",
+            }}
+          >
+            <ShopPanel setActivePanel={setActivePanel} />
+          </Box>
         </Collapse>
       </Stack>
     </Box>

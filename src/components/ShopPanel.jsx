@@ -3,7 +3,7 @@ import {Stack, Box, Collapse, Button, Typography} from "@mui/material";
 export default function ShopPanel({ activePanel, setActivePanel }) {
 
   return (
-    <Box>ShopPanel
+    <Box sx={{border: 1}}>ShopPanel
       <Button
         variant="menu2"
         sx={{height:"100%"}}
