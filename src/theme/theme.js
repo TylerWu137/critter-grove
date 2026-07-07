@@ -48,6 +48,11 @@ const theme = createTheme({
   },
 
   components: {
+    MuiTypography: {
+      defaultProps: {
+        color: "inherit",
+      },
+    },
     MuiButton: {
       defaultProps: {
         variant: "contained",
@@ -60,7 +65,13 @@ const theme = createTheme({
           textTransform: "none",
           fontSize: "1.3rem",
           color: "var(--cream)",
-          backgroundColor: "var(--brown)"
+          backgroundColor: "var(--brown)",
+          transition: "color 200ms ease, border-color 200ms ease, background-color 200ms ease",
+
+          "&:hover": {
+            color: "var(--yellow)",
+            borderColor: "var(--yellow)",
+          },
         },
       },
       variants: [

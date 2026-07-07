@@ -46,7 +46,7 @@ export default function Currencies({acornAmt, treatAmt, flowerAmt}) {
   );
 
   return (
-    <Stack spacing={1} sx={{width: "15%"}}>
+    <Stack spacing={1} sx={{width: "15vw"}}>
       {CurrencyCard("S", acornAmt)}
       {CurrencyCard("T", treatAmt)}
       {CurrencyCard("F", flowerAmt)}

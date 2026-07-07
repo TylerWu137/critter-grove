@@ -5,7 +5,7 @@ import UserProfile from "../components/UserProfile";
 import Currencies from "../components/Currencies";
 import TodayUpdates from "../components/TodayUpdates";
 import NavBar from "../components/NavBar";
-import CrittersPanel from "../components/CrittersPanel";
+import CrittersPanel from "../components/critters/CrittersPanel";
 import ShopPanel from "../components/ShopPanel";
 
 
@@ -51,10 +51,13 @@ export default function HomeScreen() {
 
             <TodayUpdates sx={{ flex: 6 }} />
 
-            <NavBar
-              activePanel={activePanel}
-              setActivePanel={setActivePanel}
-            />
+            <Stack sx={{flex: 2}}>
+              <Box sx={{flex: 1}}/>
+              <NavBar
+                activePanel={activePanel}
+                setActivePanel={setActivePanel}
+              />
+            </Stack>
           </Stack>
         </Box>
 
