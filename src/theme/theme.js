@@ -67,11 +67,6 @@ const theme = createTheme({
           color: "var(--cream)",
           backgroundColor: "var(--brown)",
           transition: "color 200ms ease, border-color 200ms ease, background-color 200ms ease",
-
-          "&:hover": {
-            color: "var(--yellow)",
-            borderColor: "var(--yellow)",
-          },
         },
       },
       variants: [
@@ -83,6 +78,11 @@ const theme = createTheme({
             border: "2px solid var(--brown)",
             borderRadius: 8,
             fontSize: "1.3rem",
+
+            "&:hover": {
+              color: "var(--yellow)",
+              borderColor: "var(--yellow)",
+            },
           },
         },
         {
@@ -94,9 +94,65 @@ const theme = createTheme({
             borderRadius: 8,
             fontSize: "1rem",
             whiteSpace: "nowrap",
+            
+            "&:hover": {
+              color: "var(--yellow)",
+              borderColor: "var(--yellow)",
+            },
           },
         },
       ],
+    },
+    MuiTextField: {
+      defaultProps: {
+        variant: "outlined",
+        size: "small",
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          borderRadius: 8,
+          color: "var(--brown)",
+          backgroundColor: "var(--cream)",
+          borderWidth: 2,
+
+          "& .MuiOutlinedInput-input": {
+            fontFamily: '"Nunito", sans-serif',
+            fontSize: "1rem",
+            fontWeight: 500,
+            color: "var(--brown)",
+
+            "&::placeholder": {
+              color: "var(--light-brown)",
+            },
+          },
+
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: "var(--brown)",
+            borderWidth: 2,
+          },
+
+          "&:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: "var(--brown)",
+            borderWidth: 2.5,
+          },
+
+          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: "var(--red)",
+            borderWidth: 2.5,
+          },
+          "&.Mui-focused:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: "var(--red)",
+            borderWidth: 2.5,
+          },
+          "& input": {
+            color: "var(--brown)",
+            px: 6,
+            py: 4
+          },
+        },
+      },
     },
   },
 });

@@ -6,12 +6,16 @@ import CrittersMenuView from "./CrittersMenuView"
 import CrittersCompanionsView from "./CrittersCompanionsView"
 import CrittersCritterDexView from "./CrittersCritterDexView"
 
+function capitalize(str) {
+  return str[0].toUpperCase() + str.slice(1);
+}
+
 export default function CrittersPanel({ setActivePanel }) {
-  const [view, setView] = useState("menu");
+  const [view, setView] = useState("critters");
 
   const viewComponent = () => {
     switch (view) {
-      case "menu":
+      case "critters":
         return <CrittersMenuView view={view} setView={setView}/>;
       case "companions":
         return <CrittersCompanionsView />;
@@ -29,7 +33,7 @@ export default function CrittersPanel({ setActivePanel }) {
       case "critterdex":
         otherView = "companions"; section = "Companions";
         break;
-      case "menu":
+      case "critters":
         return
     }
     return (
@@ -52,12 +56,12 @@ export default function CrittersPanel({ setActivePanel }) {
   const closeButton = () => {
     let clickFunction, text;
     switch (view) {
-      case "menu": 
+      case "critters": 
         clickFunction = () => { setActivePanel(null)};
         text = "Close";
         break;
       default:
-        clickFunction = () => { setView("menu")};
+        clickFunction = () => { setView("critters")};
         text = "Back"
     }
     return (
@@ -90,14 +94,15 @@ export default function CrittersPanel({ setActivePanel }) {
     >
       <Stack spacing={4} sx={{height: "100%", width: "100%", alignItems: "center"}}>
         <Stack direction="row" sx={{width: "100%"}}>
-          <Typography variant="h2" sx={{color: "var(--red)"}}>Critters</Typography>
+          <Typography variant="h2" sx={{color: "var(--red)"}}>{capitalize(view)}</Typography>
           <Box sx={{flex: 1}}/>
           <Box sx={{height: 1, aspectRatio: "1 / 1", border: 1}}>?</Box>
         </Stack>
 
-        {viewComponent()}
+        <Box sx={{flex: 1, overflow: "hidden", minHeight: 0, width: "100%"}}>
+          {viewComponent()}
+        </Box>
 
-        <Box sx={{flex: 1}}/>
         <Stack direction="row" sx={{width: "100%", alignItems: "flex-end"}}>
           {closeButton()}
           <Box sx={{flex: 1}}/>
