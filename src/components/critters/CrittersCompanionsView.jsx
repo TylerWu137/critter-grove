@@ -53,17 +53,21 @@ export default function CrittersCompanionsView() {
 
     if (!activeContainer || !overContainer) return;
 
+    // block any interaction where both cards are in the critters section
+    if (activeContainer === "critters" && overContainer === "critters") {
+      return;
+    }
+
     if (activeContainer === overContainer) {
-      // reorder within the same list (unchanged)
-      const setList = activeContainer === "companions" ? setCompanions : setCritters;
-      setList((items) => {
+      // only reachable for companions now — reorder within companions
+      setCompanions((items) => {
         const oldIndex = items.findIndex((i) => i.id === active.id);
         const newIndex = items.findIndex((i) => i.id === over.id);
         if (oldIndex === -1 || newIndex === -1) return items;
         return arrayMove(items, oldIndex, newIndex);
       });
     } else {
-      // swap between lists — active item and over item trade places
+      // cross-list swap (companions <-> critters)
       const sourceList = activeContainer === "companions" ? companions : critters;
       const destList = activeContainer === "companions" ? critters : companions;
       const setSource = activeContainer === "companions" ? setCompanions : setCritters;
