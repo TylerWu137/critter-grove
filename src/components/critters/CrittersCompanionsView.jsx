@@ -11,6 +11,7 @@ import { arrayMove } from "@dnd-kit/sortable";
 
 import MyCompanionsSection from "./MyCompanionsSection";
 import MyCrittersSection from "./MyCrittersSection";
+import CritterInfoSection from "./CritterInfoSection";
 import CritterCard from "./CritterCard";
 import { DragOverlay } from "@dnd-kit/core";
 import { userCompanions as initialCompanions } from "../../data/companions";
@@ -24,6 +25,7 @@ export default function CrittersCompanionsView() {
     )
   );
   const [activeCritter, setActiveCritter] = useState(null);
+  const [selectedCritter, setSelectedCritter] = useState(null);
 
   const sensors = useSensors(useSensor(PointerSensor, {
     activationConstraint: { distance: 5 }, // avoid accidental drags on click
@@ -99,9 +101,19 @@ export default function CrittersCompanionsView() {
       onDragEnd={handleDragEnd}
     >
       <Stack spacing={1.5} sx={{ width: "100%", height: "100%", overflow: "hidden" }}>
-        <MyCompanionsSection companions={companions} />
+        <MyCompanionsSection companions={companions} onCritterClick={setSelectedCritter} />
         <Box sx={{ height: 2, backgroundColor: "var(--brown)", borderRadius: "999px" }} />
-        <MyCrittersSection critters={critters} companions={companions} />
+        {selectedCritter ? (
+          <CritterInfoSection
+            critter={selectedCritter}
+            onBack={() => setSelectedCritter(null)}
+          />
+        ) : (
+          <MyCrittersSection
+            critters={critters}
+            onCritterClick={setSelectedCritter}
+          />
+        )}
       </Stack>
 
       <DragOverlay>

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
 import DraggableCritterCard from "./DraggableCritterCard";
 
-export default function MyCrittersSection({ critters, companions }) {
+export default function MyCrittersSection({ critters, onCritterClick }) {
   const [search, setSearch] = useState("");
 
   const filteredCritters = critters.filter((critter) =>
@@ -27,7 +27,9 @@ export default function MyCrittersSection({ critters, companions }) {
         >
           {filteredCritters.map((critter) => (
             <Grid size={2.4} key={critter.id} sx={{ zoom: 0.8 }}>
-              <DraggableCritterCard id={critter.id} name={critter.name} level={critter.level} />
+              <DraggableCritterCard id={critter.id} name={critter.name} level={critter.level} 
+                onClick={() => onCritterClick(critter)}
+              />
             </Grid>
           ))}
         </Grid>
