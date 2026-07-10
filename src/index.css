@@ -23,6 +23,7 @@ html, body, #root {
   --yellow: #F2C14E;
   --light-brown: #C5A485;
   --bubble-shadow: rgba(43, 51, 40, 0.75);
+  --highlight: rgba(242, 193, 78, 0.25);
   --fredoka: "Fredoka", sans-serif;
   --fredoka-one: "Fredoka One", sans-serif;
   --nunito: "Nunito", sans-serif;
