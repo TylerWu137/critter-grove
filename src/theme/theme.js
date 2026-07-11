@@ -34,10 +34,28 @@ const theme = createTheme({
       fontSize: "1.2rem"
     },
 
+    body2: {
+      fontFamily: '"Nunito", sans-serif',
+      fontWeight: 300,
+      fontSize: "1rem"
+    },
+
+    body3: {
+      fontFamily: '"Nunito", sans-serif',
+      fontWeight: 300,
+      fontSize: "0.8rem"
+    },
+
     caption: {
       fontFamily: '"Nunito", sans-serif',
       fontWeight: 300,
       fontSize: "1rem"
+    },
+
+    xs: {
+      fontFamily: '"Nunito", sans-serif',
+      fontWeight: 200,
+      fontSize: "0.5rem"
     },
 
     button: {
@@ -66,6 +84,7 @@ const theme = createTheme({
           fontSize: "1.3rem",
           color: "var(--cream)",
           backgroundColor: "var(--brown)",
+          height: "fit-content",
           transition: "color 200ms ease, border-color 200ms ease, background-color 200ms ease",
         },
       },
@@ -95,6 +114,22 @@ const theme = createTheme({
             fontSize: "1rem",
             whiteSpace: "nowrap",
             
+            "&:hover": {
+              color: "var(--yellow)",
+              borderColor: "var(--yellow)",
+            },
+          },
+        },
+        {
+          props: { variant: "action" },
+          style: {
+            backgroundColor: "var(--cream)",
+            color: "var(--brown)",
+            border: "1.5px solid var(--brown)",
+            padding: 1,
+            borderRadius: 8,
+            fontSize: "1.2rem",
+
             "&:hover": {
               color: "var(--yellow)",
               borderColor: "var(--yellow)",

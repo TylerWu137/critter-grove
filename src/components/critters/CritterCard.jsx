@@ -32,9 +32,9 @@ export default function CritterCard({ sx, name, level, onClick }) {
         ...sx,
       }}
     >
-      <Box sx={{ height: "80px", width: "80px", border: 1 }}>image</Box>
+      <Box sx={{ height: "75px", width: "75px", border: 1 }}>image</Box>
       <Typography variant="h4" sx={{ color: "var(--brown)" }}>{name}</Typography>
-      <Typography variant="body2" sx={{ color: "var(--brown)" }}>Lv. {level}</Typography>
+      <Typography variant="body3" sx={{ color: "var(--brown)" }}>Lv. {level}</Typography>
     </Stack>
   );
 }

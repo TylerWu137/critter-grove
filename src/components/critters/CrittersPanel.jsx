@@ -84,7 +84,6 @@ function CrittersPanelContent({ setActivePanel }) {
       <Button
             variant="menu"
             onClick={clickFunction}
-            sx={{height: "fit-content"}}
           >
             <Typography variant="h3">
               {text}

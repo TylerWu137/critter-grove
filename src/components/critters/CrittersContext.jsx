@@ -93,6 +93,29 @@ export function CrittersProvider({ children }) {
     }
   };
 
+  // add foodAmt xp to a critter, cascading level-ups whenever xp exceeds level*10
+  const feedCritter = (critter, foodAmt) => {
+    const container = findContainer(critter.id);
+    if (!container) return;
+
+    let newXp = critter.xp + foodAmt;
+    let newLevel = critter.level;
+    while (newXp > newLevel * 10) {
+      newXp -= newLevel * 10;
+      newLevel++;
+    }
+
+    const updatedCritter = { ...critter, xp: newXp, level: newLevel };
+
+    const setList = container === "companions" ? setCompanions : setCritters;
+    setList((items) =>
+      items.map((item) => (item.id === critter.id ? updatedCritter : item))
+    );
+
+    // keep the info panel in sync with the freshly updated critter
+    setSelectedCritter(updatedCritter);
+  };
+
   const value = {
     companions,
     critters,
@@ -100,6 +123,7 @@ export function CrittersProvider({ children }) {
     selectedCritter,
     setSelectedCritter,
     getCritterById,
+    feedCritter,
     sensors,
     closestCenter,
     handleDragStart,
