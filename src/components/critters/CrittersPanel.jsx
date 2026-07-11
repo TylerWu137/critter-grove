@@ -1,7 +1,8 @@
-import {Stack, Box, Collapse, Button, Typography, Link} from "@mui/material";
+import { Stack, Box, Button, Typography } from "@mui/material";
 import { useState } from "react";
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 
+import { CrittersProvider, useCritters } from "./CrittersContext";
 import CrittersMenuView from "./CrittersMenuView"
 import CrittersCompanionsView from "./CrittersCompanionsView"
 import CrittersCritterDexView from "./CrittersCritterDexView"
@@ -11,7 +12,16 @@ function capitalize(str) {
 }
 
 export default function CrittersPanel({ setActivePanel }) {
+  return (
+    <CrittersProvider>
+      <CrittersPanelContent setActivePanel={setActivePanel} />
+    </CrittersProvider>
+  );
+}
+
+function CrittersPanelContent({ setActivePanel }) {
   const [view, setView] = useState("critters");
+  const { selectedCritter, setSelectedCritter } = useCritters();
 
   const viewComponent = () => {
     switch (view) {
@@ -55,19 +65,25 @@ export default function CrittersPanel({ setActivePanel }) {
 
   const closeButton = () => {
     let clickFunction, text;
-    switch (view) {
-      case "critters": 
-        clickFunction = () => { setActivePanel(null)};
-        text = "Close";
-        break;
-      default:
-        clickFunction = () => { setView("critters")};
-        text = "Back"
+    console.log({ view, selectedCritter });
+    if (view === "companions" && selectedCritter) {
+      // on CritterInfoSection -> go back to the critters/companions list
+      clickFunction = () => setSelectedCritter(null);
+      text = "Back";
+    } else if (view === "critters") {
+      // on the base landing menu -> close the whole panel
+      clickFunction = () => setActivePanel(null);
+      text = "Close";
+    } else {
+      // on companions/critterdex (no selection) -> go back to menu
+      clickFunction = () => setView("critters");
+      text = "Back";
     }
+
     return (
       <Button
             variant="menu"
-            onClick={() => clickFunction()}
+            onClick={clickFunction}
             sx={{height: "fit-content"}}
           >
             <Typography variant="h3">

@@ -1,16 +1,22 @@
-import { Stack, Box, Typography, Button } from "@mui/material";
+import { Stack, Typography, Button } from "@mui/material";
 
-export default function CritterInfoSection({ critter, onBack }) {
+import { useCritters } from "./CrittersContext";
+
+export default function CritterInfoSection() {
+  const { selectedCritter, setSelectedCritter } = useCritters();
+
+  if (!selectedCritter) return null;
+
   return (
     <Stack spacing={2} sx={{ flex: 1, minHeight: 0, p: 2 }}>
-      <Button onClick={onBack} sx={{ alignSelf: "flex-start", color: "var(--brown)" }}>
+      <Button onClick={() => setSelectedCritter(null)} sx={{ alignSelf: "flex-start", color: "var(--brown)" }}>
         ← Back
       </Button>
       <Typography variant="h3" sx={{ color: "var(--brown)" }}>
-        {critter.name}
+        {selectedCritter.name}
       </Typography>
       <Typography variant="body1" sx={{ color: "var(--brown)" }}>
-        Lv. {critter.level}
+        Lv. {selectedCritter.level}
       </Typography>
       {/* add more critter details here as needed */}
     </Stack>

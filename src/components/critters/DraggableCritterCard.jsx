@@ -1,8 +1,13 @@
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
+
+import { useCritters } from "./CrittersContext";
 import CritterCard from "./CritterCard";
 
-export default function DraggableCritterCard({ id, name, level, onClick }) {
+export default function DraggableCritterCard({ id }) {
+  const { getCritterById, setSelectedCritter } = useCritters();
+  const critter = getCritterById(id);
+
   const { attributes, listeners, setNodeRef: setDragRef, transform, isDragging } =
     useDraggable({ id });
   const { setNodeRef: setDropRef } = useDroppable({ id });
@@ -18,9 +23,15 @@ export default function DraggableCritterCard({ id, name, level, onClick }) {
     setDropRef(node);
   };
 
+  if (!critter) return null;
+
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <CritterCard name={name} level={level} onClick={onClick} />
+      <CritterCard
+        name={critter.name}
+        level={critter.level}
+        onClick={() => setSelectedCritter(critter)}
+      />
     </div>
   );
 }

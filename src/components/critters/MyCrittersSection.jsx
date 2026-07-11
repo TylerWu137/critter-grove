@@ -1,9 +1,12 @@
 import { Grid, TextField, Stack } from "@mui/material";
 import { useState } from "react";
 import { SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
+
+import { useCritters } from "./CrittersContext";
 import DraggableCritterCard from "./DraggableCritterCard";
 
-export default function MyCrittersSection({ critters, onCritterClick }) {
+export default function MyCrittersSection() {
+  const { critters } = useCritters();
   const [search, setSearch] = useState("");
 
   const filteredCritters = critters.filter((critter) =>
@@ -27,9 +30,7 @@ export default function MyCrittersSection({ critters, onCritterClick }) {
         >
           {filteredCritters.map((critter) => (
             <Grid size={2.4} key={critter.id} sx={{ zoom: 0.8 }}>
-              <DraggableCritterCard id={critter.id} name={critter.name} level={critter.level} 
-                onClick={() => onCritterClick(critter)}
-              />
+              <DraggableCritterCard id={critter.id} />
             </Grid>
           ))}
         </Grid>

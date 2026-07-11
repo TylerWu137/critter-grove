@@ -1,14 +1,18 @@
 import { Grid } from "@mui/material";
 import { SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
+
+import { useCritters } from "./CrittersContext";
 import SortableCritterCard from "./SortableCritterCard";
 
-export default function MyCompanionsSection({ companions, onCritterClick }) {
+export default function MyCompanionsSection() {
+  const { companions } = useCritters();
+
   return (
     <SortableContext items={companions.map((c) => c.id)} strategy={rectSortingStrategy}>
       <Grid container columnSpacing={0} rowSpacing={1}>
         {companions.map((critter) => (
           <Grid size={4} key={critter.id}>
-            <SortableCritterCard id={critter.id} name={critter.name} level={critter.level} onClick={() => onCritterClick(critter)} />
+            <SortableCritterCard id={critter.id} />
           </Grid>
         ))}
       </Grid>
