@@ -11,6 +11,8 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { userCompanions as initialCompanions } from "../../data/companions";
 import { userCritters as initialCritters } from "../../data/critters";
 
+const MAX_COMPANIONS = 6;
+
 const CrittersContext = createContext(null);
 
 export function CrittersProvider({ children }) {
@@ -22,6 +24,8 @@ export function CrittersProvider({ children }) {
   );
   const [activeCritter, setActiveCritter] = useState(null);
   const [selectedCritter, setSelectedCritter] = useState(null);
+  const [pickingCompanion, setPickingCompanion] = useState(false);
+  const [releaseModalOpen, setReleaseModalOpen] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -49,6 +53,18 @@ export function CrittersProvider({ children }) {
     const { active, over } = event;
     setActiveCritter(null);
     if (!over) return;
+
+    // dropping a critter directly onto an empty companion slot
+    // (over.id looks like "empty-slot-0") adds it with no swap partner needed
+    if (typeof over.id === "string" && over.id.startsWith("empty-slot-")) {
+      const activeContainer = findContainer(active.id);
+      if (activeContainer === "critters" && companions.length < MAX_COMPANIONS) {
+        const critter = getCritterById(active.id);
+        setCritters((items) => items.filter((item) => item.id !== active.id));
+        setCompanions((items) => [...items, critter]);
+      }
+      return;
+    }
 
     const activeContainer = findContainer(active.id);
     const overContainer = findContainer(over.id);
@@ -116,6 +132,73 @@ export function CrittersProvider({ children }) {
     setSelectedCritter(updatedCritter);
   };
 
+  // opens the "pick a companion to swap" backdrop + highlight flow
+  const startAwakenCompanion = () => setPickingCompanion(true);
+  const cancelAwakenCompanion = () => setPickingCompanion(false);
+
+  // adds selectedCritter directly into companions (no swap partner
+  // needed); used when clicking an EMPTY companion slot during pick mode
+  const addToCompanions = () => {
+    if (!selectedCritter) return;
+    if (findContainer(selectedCritter.id) !== "critters") return;
+    if (companions.length >= MAX_COMPANIONS) return;
+
+    setCritters((items) => items.filter((item) => item.id !== selectedCritter.id));
+    setCompanions((items) => [...items, selectedCritter]);
+    setPickingCompanion(false);
+  };
+
+  // moves a companion back to the critters list, no swap needed
+  const hibernateCompanion = () => {
+    if (!selectedCritter) return;
+    if (findContainer(selectedCritter.id) !== "companions") return; // safety check
+
+    setCompanions((items) => items.filter((item) => item.id !== selectedCritter.id));
+    setCritters((items) => [...items, selectedCritter]);
+  };
+
+  // swaps selectedCritter into companions, in place of the chosen companion
+  const swapWithCompanion = (companionId) => {
+    if (!selectedCritter) return;
+    const companion = getCritterById(companionId);
+    if (!companion) return;
+
+    const critterContainer = findContainer(selectedCritter.id);
+    const companionContainer = findContainer(companionId);
+    if (!critterContainer || !companionContainer || critterContainer === companionContainer) {
+      setPickingCompanion(false);
+      return;
+    }
+
+    const setCritterContainerList = critterContainer === "companions" ? setCompanions : setCritters;
+    const setCompanionContainerList = companionContainer === "companions" ? setCompanions : setCritters;
+
+    setCritterContainerList((items) =>
+      items.map((item) => (item.id === selectedCritter.id ? companion : item))
+    );
+    setCompanionContainerList((items) =>
+      items.map((item) => (item.id === companionId ? selectedCritter : item))
+    );
+
+    setPickingCompanion(false);
+  };
+
+  const openReleaseModal = () => setReleaseModalOpen(true);
+  const closeReleaseModal = () => setReleaseModalOpen(false);
+
+  // permanently removes the selected critter from whichever list it's in
+  const releaseCritter = () => {
+    if (!selectedCritter) return;
+    const container = findContainer(selectedCritter.id);
+    if (!container) return;
+
+    const setList = container === "companions" ? setCompanions : setCritters;
+    setList((items) => items.filter((item) => item.id !== selectedCritter.id));
+
+    setReleaseModalOpen(false);
+    setSelectedCritter(null);
+  };
+
   const value = {
     companions,
     critters,
@@ -123,7 +206,19 @@ export function CrittersProvider({ children }) {
     selectedCritter,
     setSelectedCritter,
     getCritterById,
+    findContainer,
     feedCritter,
+    pickingCompanion,
+    startAwakenCompanion,
+    cancelAwakenCompanion,
+    addToCompanions,
+    maxCompanions: MAX_COMPANIONS,
+    hibernateCompanion,
+    swapWithCompanion,
+    releaseModalOpen,
+    openReleaseModal,
+    closeReleaseModal,
+    releaseCritter,
     sensors,
     closestCenter,
     handleDragStart,

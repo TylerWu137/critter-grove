@@ -6,6 +6,8 @@ import { CrittersProvider, useCritters } from "./CrittersContext";
 import CrittersMenuView from "./CrittersMenuView"
 import CrittersCompanionsView from "./CrittersCompanionsView"
 import CrittersCritterDexView from "./CrittersCritterDexView"
+import PickCompanionBackdrop from "./PickCompanionBackdrop"
+import ReleaseConfirmModal from "./ReleaseConfirmModal"
 
 function capitalize(str) {
   return str[0].toUpperCase() + str.slice(1);
@@ -124,6 +126,8 @@ function CrittersPanelContent({ setActivePanel }) {
           {redirectButton()}
         </Stack>
       </Stack>
+      <PickCompanionBackdrop />
+      <ReleaseConfirmModal />
     </Box>
   );
 }
