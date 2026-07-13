@@ -6,11 +6,11 @@ import { useCritters } from "./CrittersContext";
 import DraggableCritterCard from "./DraggableCritterCard";
 
 export default function MyCrittersSection() {
-  const { critters } = useCritters();
+  const { critters, getCritterName } = useCritters();
   const [search, setSearch] = useState("");
 
   const filteredCritters = critters.filter((critter) =>
-    critter.name.toLowerCase().includes(search.toLowerCase())
+    getCritterName(critter).toLowerCase().includes(search.toLowerCase())
   );
 
   return (

@@ -3,20 +3,20 @@ import { Stack, Typography, Button, Box, LinearProgress, linearProgressClasses }
 import { useCritters } from "./CrittersContext";
 
 export default function CritterInfoSection() {
-  const { selectedCritter, feedCritter, findContainer, startAwakenCompanion, hibernateCompanion, openReleaseModal, } = useCritters();
+  const { selectedCritter, feedCritter, getCritterName, startAwakenCompanion, hibernateCompanion, openReleaseModal, } = useCritters();
   
   const xpForNextLevel = 10 * selectedCritter.level;
   const progress = Math.min((selectedCritter.xp / xpForNextLevel) * 100, 100);
 
   if (!selectedCritter) return null;
 
-  const isCompanion = findContainer(selectedCritter.id) === "companions";
+  const isCompanion = selectedCritter.isCompanion;
 
   return (
     <Stack spacing={2} sx={{flex: 1, minHeight: 0, width: "100%", px: 1}}>
       <Stack sx={{width: "50%"}}>
         <Box sx={{ display: "flex", flexDirection: "row", alignItems: "baseline", gap: 3 }}>
-          <Typography variant="h3" sx={{ color: "var(--brown)" }}>{selectedCritter.name}</Typography>
+          <Typography variant="h3" sx={{ color: "var(--brown)" }}>{getCritterName(selectedCritter)}</Typography>
           <Typography variant="body1" sx={{ color: "var(--brown)" }}>Lv. {selectedCritter.level}</Typography>
         </Box>
         <Box sx={{flex: 1}}/>

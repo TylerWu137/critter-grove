@@ -5,8 +5,10 @@ import { useCritters } from "./CrittersContext";
 import CritterCard from "./CritterCard";
 
 export default function DraggableCritterCard({ id }) {
-  const { getCritterById, setSelectedCritter } = useCritters();
+  const { getCritterById, getCritterName, setSelectedCritter } = useCritters();
+  // ★ CHANGED — added getCritterName
   const critter = getCritterById(id);
+  console.log("id:", id, "critter:", critter);
 
   const { attributes, listeners, setNodeRef: setDragRef, transform, isDragging } =
     useDraggable({ id });
@@ -28,7 +30,7 @@ export default function DraggableCritterCard({ id }) {
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
       <CritterCard
-        name={critter.name}
+        name={getCritterName(critter)} // ★ CHANGED — was critter.name
         level={critter.level}
         onClick={() => setSelectedCritter(critter)}
       />

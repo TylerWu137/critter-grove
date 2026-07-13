@@ -116,7 +116,7 @@ function CrittersPanelContent({ setActivePanel }) {
           <Box sx={{height: 1, aspectRatio: "1 / 1", border: 1}}>?</Box>
         </Stack>
 
-        <Box sx={{flex: 1, overflow: "hidden", minHeight: 0, width: "100%"}}>
+        <Box sx={{display: "flex", flex: 1, overflow: "hidden", width: "100%"}}>
           {viewComponent()}
         </Box>
 
