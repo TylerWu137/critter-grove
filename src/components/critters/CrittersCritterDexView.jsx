@@ -49,7 +49,7 @@ export default function CrittersCritterDexView() {
             },
            }}
         >
-          {critterSpecies.map((species) => {
+          {filteredCritters.map((species) => {
             const owned = ownedCritters.find((c) => c.id === species.id);
     
             return (
