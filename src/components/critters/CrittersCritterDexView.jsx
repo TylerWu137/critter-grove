@@ -39,7 +39,6 @@ export default function CrittersCritterDexView() {
               backgroundColor: "var(--cream)",
               border: "2px solid var(--brown)",
               borderRadius: "999px",
-              borderRadius: "999px",
             },
 
             "&::-webkit-scrollbar-thumb": {

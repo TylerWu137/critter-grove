@@ -8,8 +8,6 @@ import {
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 
-import { userCompanions as initialCompanions } from "../../data/companions";
-import { userCritters as initialCritters } from "../../data/critters";
 import { ownedCritters as initialOwnedCritters } from "../../data/ownedCritters";
 import { critterSpecies } from "../../data/critterSpecies";
 
