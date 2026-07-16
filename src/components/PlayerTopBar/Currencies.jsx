@@ -1,6 +1,6 @@
 import {Stack, Box, Typography, LinearProgress, linearProgressClasses} from "@mui/material";
 
-export default function Currencies({acornAmt, treatAmt, flowerAmt}) {
+export default function Currencies({acorns, treats, flowers}) {
   const CurrencyCard = (currency, amount) => (
     <Box
       sx={{
@@ -47,9 +47,9 @@ export default function Currencies({acornAmt, treatAmt, flowerAmt}) {
 
   return (
     <Stack spacing={1} sx={{width: "15vw"}}>
-      {CurrencyCard("S", acornAmt)}
-      {CurrencyCard("T", treatAmt)}
-      {CurrencyCard("F", flowerAmt)}
+      {CurrencyCard("S", acorns)}
+      {CurrencyCard("T", treats)}
+      {CurrencyCard("F", flowers)}
     </Stack>
   )
 };

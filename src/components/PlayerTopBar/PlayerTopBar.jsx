@@ -18,9 +18,9 @@ export default function PlayerTopBar({ sx, activePanel }) {
           />
           <Box sx={{ flex: 1 }} />
           <Currencies
-            acornAmt="125"
-            treatAmt="27,232,293"
-            flowerAmt="8"
+            acorns = {profile.acorns}
+            treats = {profile.treats}
+            flowers = {profile.flowers}
             activePanel={activePanel}
           />
     </Stack>
