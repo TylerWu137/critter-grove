@@ -1,13 +1,14 @@
 // src/data/ownedCritters.js
 //
-// Per-user data — one row per critter this user has caught.
-// Replaces the old critters.js + companions.js split: instead of two
-// separate arrays, ownership is now a boolean flag on a single record.
-// `speciesId` links back to critterSpecies.js for name/rarity.
+// Per-user data -- one row per critter a user has caught.
+// `userId` links back to users.js; `speciesId` links to critterSpecies.js.
+// isCompanion is a flag rather than a separate list, so moving a critter
+// in/out of the companion roster is a single-field update.
 
 export const ownedCritters = [
   {
     id: 1,
+    userId: 1,
     speciesId: 1,
     level: 12,
     xp: 90,
@@ -15,6 +16,7 @@ export const ownedCritters = [
   },
   {
     id: 2,
+    userId: 1,
     speciesId: 2,
     level: 18,
     xp: 144,
@@ -22,6 +24,7 @@ export const ownedCritters = [
   },
   {
     id: 3,
+    userId: 1,
     speciesId: 3,
     level: 7,
     xp: 35,
@@ -29,6 +32,7 @@ export const ownedCritters = [
   },
   {
     id: 4,
+    userId: 1,
     speciesId: 4,
     level: 15,
     xp: 105,
@@ -36,6 +40,7 @@ export const ownedCritters = [
   },
   {
     id: 5,
+    userId: 1,
     speciesId: 5,
     level: 22,
     xp: 198,
@@ -43,6 +48,7 @@ export const ownedCritters = [
   },
   {
     id: 6,
+    userId: 1,
     speciesId: 6,
     level: 9,
     xp: 27,
@@ -50,6 +56,7 @@ export const ownedCritters = [
   },
   {
     id: 7,
+    userId: 1,
     speciesId: 7,
     level: 14,
     xp: 98,
@@ -57,6 +64,7 @@ export const ownedCritters = [
   },
   {
     id: 8,
+    userId: 1,
     speciesId: 8,
     level: 20,
     xp: 160,
@@ -64,6 +72,7 @@ export const ownedCritters = [
   },
   {
     id: 9,
+    userId: 1,
     speciesId: 9,
     level: 16,
     xp: 96,
@@ -71,6 +80,7 @@ export const ownedCritters = [
   },
   {
     id: 10,
+    userId: 1,
     speciesId: 10,
     level: 25,
     xp: 225,
@@ -78,6 +88,7 @@ export const ownedCritters = [
   },
   {
     id: 11,
+    userId: 1,
     speciesId: 11,
     level: 8,
     xp: 40,
@@ -85,6 +96,7 @@ export const ownedCritters = [
   },
   {
     id: 12,
+    userId: 1,
     speciesId: 12,
     level: 19,
     xp: 171,
@@ -92,6 +104,7 @@ export const ownedCritters = [
   },
   {
     id: 13,
+    userId: 1,
     speciesId: 13,
     level: 28,
     xp: 196,
@@ -99,6 +112,7 @@ export const ownedCritters = [
   },
   {
     id: 14,
+    userId: 1,
     speciesId: 14,
     level: 5,
     xp: 15,
@@ -106,6 +120,7 @@ export const ownedCritters = [
   },
   {
     id: 15,
+    userId: 1,
     speciesId: 15,
     level: 17,
     xp: 119,
@@ -113,6 +128,7 @@ export const ownedCritters = [
   },
   {
     id: 16,
+    userId: 1,
     speciesId: 16,
     level: 30,
     xp: 270,
@@ -120,6 +136,7 @@ export const ownedCritters = [
   },
   {
     id: 17,
+    userId: 1,
     speciesId: 17,
     level: 13,
     xp: 65,
@@ -127,6 +144,7 @@ export const ownedCritters = [
   },
   {
     id: 18,
+    userId: 1,
     speciesId: 18,
     level: 21,
     xp: 168,
@@ -134,6 +152,7 @@ export const ownedCritters = [
   },
   {
     id: 19,
+    userId: 1,
     speciesId: 19,
     level: 10,
     xp: 40,
@@ -141,6 +160,7 @@ export const ownedCritters = [
   },
   {
     id: 20,
+    userId: 1,
     speciesId: 20,
     level: 24,
     xp: 216,
@@ -148,6 +168,7 @@ export const ownedCritters = [
   },
   {
     id: 21,
+    userId: 1,
     speciesId: 21,
     level: 11,
     xp: 55,
@@ -155,6 +176,7 @@ export const ownedCritters = [
   },
   {
     id: 22,
+    userId: 1,
     speciesId: 22,
     level: 23,
     xp: 184,
@@ -162,6 +184,7 @@ export const ownedCritters = [
   },
   {
     id: 23,
+    userId: 1,
     speciesId: 23,
     level: 26,
     xp: 208,
@@ -169,6 +192,7 @@ export const ownedCritters = [
   },
   {
     id: 24,
+    userId: 1,
     speciesId: 24,
     level: 15,
     xp: 90,
@@ -176,9 +200,34 @@ export const ownedCritters = [
   },
   {
     id: 25,
+    userId: 1,
     speciesId: 25,
     level: 29,
     xp: 261,
+    isCompanion: false,
+  },
+  {
+    id: 26,
+    userId: 2,
+    speciesId: 1,
+    level: 3,
+    xp: 10,
+    isCompanion: true,
+  },
+  {
+    id: 27,
+    userId: 2,
+    speciesId: 4,
+    level: 2,
+    xp: 5,
+    isCompanion: true,
+  },
+  {
+    id: 28,
+    userId: 2,
+    speciesId: 7,
+    level: 5,
+    xp: 22,
     isCompanion: false,
   },
 ];

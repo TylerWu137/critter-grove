@@ -1,6 +1,6 @@
 import {Stack, Box, Typography, LinearProgress, linearProgressClasses} from "@mui/material";
 
-export default function UserProfile({ username, currentXp, level }) {
+export default function UserProfile({ name, currentXp, level }) {
   const xpForNextLevel = 10 * level;
   const progress = Math.min((currentXp / xpForNextLevel) * 100, 100);
   return (
@@ -27,7 +27,7 @@ export default function UserProfile({ username, currentXp, level }) {
       >
         <Stack sx={{height: "92%" }}>
           <Box sx={{ display: "flex", flexDirection: "row", alignItems: "baseline", gap: 3 }}>
-              <Typography variant="h3" sx={{ color: "var(--brown)" }}>{username}</Typography>
+              <Typography variant="h3" sx={{ color: "var(--brown)" }}>{name}</Typography>
               <Typography variant="body1" sx={{ color: "var(--brown)" }}>Lv. {level}</Typography>
           </Box>
           <Box sx={{flex: 1}}/>

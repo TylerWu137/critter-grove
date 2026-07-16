@@ -12,11 +12,14 @@ import { ownedCritters as initialOwnedCritters } from "../../data/ownedCritters"
 import { critterSpecies } from "../../data/critterSpecies";
 
 const MAX_COMPANIONS = 6;
+const CURRENT_USER_ID = 1; // placeholder until real auth exists
 
 const CrittersContext = createContext(null);
 
 export function CrittersProvider({ children }) {
-  const [ownedCritters, setOwnedCritters] = useState(initialOwnedCritters);
+  const [ownedCritters, setOwnedCritters] = useState(() =>
+    initialOwnedCritters.filter((c) => c.userId === CURRENT_USER_ID)
+  );
   const companions = ownedCritters.filter((c) => c.isCompanion);
   const critters = ownedCritters.filter((c) => !c.isCompanion);
 

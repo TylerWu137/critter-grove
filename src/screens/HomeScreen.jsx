@@ -1,8 +1,7 @@
 import {Stack, Box, Collapse} from "@mui/material";
 import { useState } from "react";
 
-import UserProfile from "../components/UserProfile";
-import Currencies from "../components/Currencies";
+import PlayerTopBar from "../components/PlayerTopBar/PlayerTopBar";
 import TodayUpdates from "../components/TodayUpdates";
 import NavBar from "../components/NavBar";
 import CrittersPanel from "../components/critters/CrittersPanel";
@@ -33,21 +32,7 @@ export default function HomeScreen() {
           }}
         >
           <Stack sx={{ height: "100%" }}>
-            <Stack direction="row" sx={{ flex: 2 }}>
-              <UserProfile
-                username="Little Dragon"
-                currentXp={80}
-                xpForNextLevel={100}
-                level={18}
-              />
-              <Box sx={{ flex: 1 }} />
-              <Currencies
-                acornAmt="125"
-                treatAmt="27,232,293"
-                flowerAmt="8"
-                activePanel={activePanel}
-              />
-            </Stack>
+            <PlayerTopBar sx={{flex: 2}} activePanel = {activePanel} />
 
             <TodayUpdates sx={{ flex: 6 }} />
 
