@@ -1,15 +1,25 @@
 import {Stack, Box, Collapse} from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 import PlayerTopBar from "../components/PlayerTopBar/PlayerTopBar";
 import TodayUpdates from "../components/TodayUpdates";
-import NavBar from "../components/NavBar";
+import NavBar from "../components/common/NavBar";
 import CrittersPanel from "../components/critters/CrittersPanel";
 import ShopPanel from "../components/ShopPanel";
 
 
 export default function HomeScreen() {
   const [activePanel, setActivePanel] = useState(null);
+  const location = useLocation(); // ★ ADDED
+
+  // ★ ADDED — picks up { state: { openPanel: "critters" } } passed by
+  // NavBar's navigate() call from other screens, and opens that panel here
+  useEffect(() => {
+    if (location.state?.openPanel) {
+      setActivePanel(location.state.openPanel);
+    }
+  }, [location.state]);
 
   return (
     <Box sx={{ height: "100%", width: "100%", backgroundColor: "var(--green)"}}>

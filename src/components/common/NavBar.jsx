@@ -25,6 +25,10 @@ export default function NavBar({sx, activePanel, setActivePanel}) {
     </Button>
   );
 
+  // ★ CHANGED — onClick now branches depending on whether NavBar is
+  // rendered on HomeScreen (setActivePanel is a real function, passed in
+  // as a prop) or on some other screen (setActivePanel is undefined,
+  // since e.g. QuestsScreen renders <NavBar/> with no props at all).
   const NavPanelButton = (string, section) => (
     <Button
       variant="menu2"
@@ -36,7 +40,17 @@ export default function NavBar({sx, activePanel, setActivePanel}) {
           ? "var(--red)"
           : "var(--brown)",
       }}
-      onClick={() => {setActivePanel(section); setOpen(!open);}}
+      onClick={() => {
+        if (setActivePanel) {
+          // already on HomeScreen — just open the panel directly, no navigation needed
+          setActivePanel(section);
+        } else {
+          // ★ ADDED — on any other screen: navigate to Home and tell it
+          // which panel to open once it mounts, via router location state
+          navigate("/home", { state: { openPanel: section } });
+        }
+        setOpen(!open);
+      }}
     >
       <Typography variant="h4">{string}</Typography>
     </Button>

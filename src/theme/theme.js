@@ -150,7 +150,7 @@ const theme = createTheme({
           borderRadius: 8,
           color: "var(--brown)",
           backgroundColor: "var(--cream)",
-          borderWidth: 2,
+          borderWidth: 1.5,
 
           "& .MuiOutlinedInput-input": {
             fontFamily: '"Nunito", sans-serif',
@@ -165,21 +165,21 @@ const theme = createTheme({
 
           "& .MuiOutlinedInput-notchedOutline": {
             borderColor: "var(--brown)",
-            borderWidth: 2,
+            borderWidth: 1.5,
           },
 
           "&:hover .MuiOutlinedInput-notchedOutline": {
             borderColor: "var(--brown)",
-            borderWidth: 2.5,
+            borderWidth: 2,
           },
 
           "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
             borderColor: "var(--red)",
-            borderWidth: 2.5,
+            borderWidth: 2,
           },
           "&.Mui-focused:hover .MuiOutlinedInput-notchedOutline": {
             borderColor: "var(--red)",
-            borderWidth: 2.5,
+            borderWidth: 2,
           },
           "& input": {
             color: "var(--brown)",
