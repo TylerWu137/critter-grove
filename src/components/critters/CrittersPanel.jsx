@@ -8,6 +8,7 @@ import CrittersCompanionsView from "./CrittersCompanionsView"
 import CrittersCritterDexView from "./CrittersCritterDexView"
 import PickCompanionBackdrop from "./PickCompanionBackdrop"
 import ReleaseConfirmModal from "./ReleaseConfirmModal"
+import HelpButton from "../common/HelpButton"
 
 function capitalize(str) {
   return str[0].toUpperCase() + str.slice(1);
@@ -113,7 +114,7 @@ function CrittersPanelContent({ setActivePanel }) {
         <Stack direction="row" sx={{width: "100%"}}>
           <Typography variant="h2" sx={{color: "var(--red)"}}>{capitalize(view)}</Typography>
           <Box sx={{flex: 1}}/>
-          <Box sx={{height: 1, aspectRatio: "1 / 1", border: 1}}>?</Box>
+          <HelpButton />
         </Stack>
 
         <Box sx={{display: "flex", flex: 1, overflow: "hidden", width: "100%"}}>
