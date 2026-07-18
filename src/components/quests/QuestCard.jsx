@@ -9,7 +9,6 @@ import {
   Select,
   MenuItem,
   Button,
-  Modal,
 } from "@mui/material";
 
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
@@ -20,19 +19,27 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 
 import { useQuests } from "../../context/QuestsContext";
-import FullScreenBackdrop from "../common/FullScreenBackdrop"; // adjust path if it lives elsewhere
 
 export default function QuestCard({ quest }) {
-  const { toggleQuestCompletion, getTagById, questTags, editQuest, deleteQuest } = useQuests();
+  const {
+    toggleQuestCompletion,
+    getTagById,
+    questTags,
+    editQuest,
+    editingQuestId,      // ★ ADDED — from context now
+    startEditingQuest,   // ★ ADDED
+    stopEditingQuest,    // ★ ADDED
+    openDeleteModal,     // ★ ADDED
+  } = useQuests();
 
   const tag = quest.tagId ? getTagById(quest.tagId) : null;
+  const isEditing = editingQuestId === quest.id; // ★ CHANGED — derived from context, not local state
 
-  // three-dot menu / edit-mode / delete-confirm state
+  // three-dot menu — stays local; it's a DOM anchor ref specific to this card
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [hoveredButton, setHoveredButton] = useState(null); // 'edit' | 'delete' | null
 
-  // edit form fields — seeded from the quest whenever edit mode opens
+  // edit form draft fields — stay local; only committed to context on Save
   const [editType, setEditType] = useState(quest.type);
   const [editName, setEditName] = useState(quest.name);
   const [editTagId, setEditTagId] = useState(quest.tagId ?? "");
@@ -55,22 +62,20 @@ export default function QuestCard({ quest }) {
 
   const handleEditClick = () => {
     resetEditState();
-    setIsEditing(true);
+    startEditingQuest(quest.id); // ★ CHANGED — was setIsEditing(true)
     handleMenuClose();
   };
 
   const handleDeleteClick = () => {
-    setDeleteOpen(true);
+    openDeleteModal(quest); // ★ CHANGED — was setDeleteOpen(true); now hands the quest to context
     handleMenuClose();
   };
 
   const handleEditCancel = () => {
-    setIsEditing(false);
+    stopEditingQuest(); // ★ CHANGED — was setIsEditing(false)
     resetEditState();
   };
 
-  // mirrors AddQuestPopover's behavior: switching to "daily" clears date/time
-  // so a stale value can't be silently saved while the fields are disabled
   const handleEditTypeChange = (e) => {
     const newType = e.target.value;
     setEditType(newType);
@@ -91,15 +96,10 @@ export default function QuestCard({ quest }) {
       time: editTime === "" ? null : editTime,
     });
 
-    setIsEditing(false);
+    stopEditingQuest(); // ★ CHANGED — was setIsEditing(false)
   };
 
-  const handleDeleteConfirm = () => {
-    deleteQuest(quest.id);
-    setDeleteOpen(false);
-  };
-
-  // ---- EDIT MODE: card becomes the same row-1/row-2 form as AddQuestPopover ----
+  // ---- EDIT MODE ----
   if (isEditing) {
     return (
       <Stack direction="row" spacing={1} sx={{ alignItems: "center", width: "auto" }}>
@@ -113,7 +113,6 @@ export default function QuestCard({ quest }) {
             borderRadius: 2,
           }}
         >
-          {/* row 1 — cancel (x), type, description, save */}
           <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
             <IconButton
               onClick={handleEditCancel}
@@ -126,12 +125,7 @@ export default function QuestCard({ quest }) {
               value={editType}
               onChange={handleEditTypeChange}
               size="small"
-              sx={{
-                minWidth: 90,
-                height: 36,
-                textTransform: "capitalize",
-                color: "var(--brown)",
-              }}
+              sx={{ minWidth: 90, height: 36, textTransform: "capitalize", color: "var(--brown)" }}
             >
               <MenuItem value="daily" sx={{ textTransform: "capitalize" }}>
                 <Typography variant="text" component="span">Daily</Typography>
@@ -174,7 +168,6 @@ export default function QuestCard({ quest }) {
             </Button>
           </Stack>
 
-          {/* row 2 — tag, date, time */}
           <Stack direction="row" spacing={1}>
             <Select
               value={editTagId}
@@ -211,11 +204,10 @@ export default function QuestCard({ quest }) {
               onChange={(e) => setEditDate(e.target.value)}
               size="small"
               disabled={isEditDaily}
-              sx={{ flex: 1, minWidth: 0, opacity: isEditDaily ? 0.4 : 1,
-                "& .MuiOutlinedInput-input": {
-                  py: 0.8,
-                },
-                }}
+              sx={{
+                flex: 1, minWidth: 0, opacity: isEditDaily ? 0.4 : 1,
+                "& .MuiOutlinedInput-input": { py: 0.8 },
+              }}
             />
 
             <TextField
@@ -224,11 +216,10 @@ export default function QuestCard({ quest }) {
               onChange={(e) => setEditTime(e.target.value)}
               size="small"
               disabled={isEditDaily}
-              sx={{ flex: 1, minWidth: 0, opacity: isEditDaily ? 0.4 : 1,
-                "& .MuiOutlinedInput-input": {
-                  py: 0.8,
-                },
-                }}
+              sx={{
+                flex: 1, minWidth: 0, opacity: isEditDaily ? 0.4 : 1,
+                "& .MuiOutlinedInput-input": { py: 0.8 },
+              }}
             />
           </Stack>
         </Stack>
@@ -280,7 +271,6 @@ export default function QuestCard({ quest }) {
         </Stack>
       </Stack>
 
-      {/* three-dot menu — opens to the right of the icon, triangle points left */}
       <Popover
         open={menuOpen}
         anchorEl={menuAnchorEl}
@@ -290,7 +280,7 @@ export default function QuestCard({ quest }) {
         slotProps={{
           paper: {
             sx: {
-              ml: 1.5, // room for the triangle pointer
+              ml: 1.5,
               width: "6vw",
               maxWidth: "6vw",
               overflow: "visible",
@@ -307,9 +297,14 @@ export default function QuestCard({ quest }) {
                 transform: "translateY(-50%) rotate(45deg)",
                 width: 16,
                 height: 16,
-                backgroundColor: "var(--cream)",
+                background: `linear-gradient(to bottom, ${
+                  hoveredButton === "edit" ? "var(--brown)" : "var(--cream)"
+                } 50%, ${
+                  hoveredButton === "delete" ? "var(--brown)" : "var(--cream)"
+                } 50%)`,
                 borderBottom: "2px solid var(--brown)",
                 borderLeft: "2px solid var(--brown)",
+                transition: "background 200ms ease",
               },
             },
           },
@@ -318,6 +313,8 @@ export default function QuestCard({ quest }) {
         <Stack sx={{ width: "auto", overflow: "hidden", borderRadius: 3 }}>
           <Button
             onClick={handleEditClick}
+            onMouseEnter={() => setHoveredButton("edit")}
+            onMouseLeave={() => setHoveredButton(null)}
             startIcon={<EditIcon sx={{ fontSize: "18px" }} />}
             sx={{
               justifyContent: "flex-start",
@@ -332,6 +329,8 @@ export default function QuestCard({ quest }) {
           </Button>
           <Button
             onClick={handleDeleteClick}
+            onMouseEnter={() => setHoveredButton("delete")}
+            onMouseLeave={() => setHoveredButton(null)}
             startIcon={<DeleteIcon sx={{ fontSize: "18px" }} />}
             sx={{
               justifyContent: "flex-start",
@@ -346,49 +345,6 @@ export default function QuestCard({ quest }) {
           </Button>
         </Stack>
       </Popover>
-
-      {/* delete confirmation — full-screen backdrop */}
-      {/* delete confirmation — mirrors ReleaseConfirmModal's structure/styling */}
-      <Modal open={deleteOpen} onClose={() => setDeleteOpen(false)} sx={{ zIndex: 1400 }}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            backgroundColor: "var(--cream)",
-            borderRadius: 4,
-            p: 4,
-            width: 320,
-            textAlign: "center",
-          }}
-        >
-          <Stack spacing={2} sx={{ alignItems: "center" }}>
-            <Typography variant="h4" sx={{ color: "var(--brown)" }}>
-              Delete "{quest.name}"?
-            </Typography>
-            <Typography variant="body2" sx={{ color: "var(--brown)" }}>
-              This can't be undone.
-            </Typography>
-            <Stack direction="row" spacing={2}>
-              <Button
-                variant="outlined"
-                onClick={() => setDeleteOpen(false)}
-                sx={{ color: "var(--cream)", borderColor: "var(--brown)" }}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="contained"
-                onClick={handleDeleteConfirm}
-                sx={{ backgroundColor: "var(--red)" }}
-              >
-                Delete
-              </Button>
-            </Stack>
-          </Stack>
-        </Box>
-      </Modal>
     </>
   );
 }

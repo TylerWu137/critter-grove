@@ -6,6 +6,7 @@ import NavBar from "../components/common/NavBar";
 import HelpButton from "../components/common/HelpButton"
 import AddQuestPopover from "../components/quests/AddQuestPopover"
 import QuestsSection from "../components/quests/QuestsSection"
+import DeleteQuestModal from "../components/quests/DeleteQuestModal";
 
 export default function QuestsScreen() {
   const [search, setSearch] = useState("");
@@ -13,7 +14,7 @@ export default function QuestsScreen() {
   return (
     <Stack sx={{height: "100%", boxSizing: "border-box"}}>
       <PlayerTopBar sx={{pt: 4, pb: 2, pl: 4, pr: 4, backgroundColor: "var(--green)"}}/>
-      <Stack spacing={2} sx={{pt: 4, pb: 2, pl: 4, pr: 4, borderTop: "2px solid var(--brown)", flex: 100, minHeight: 0, backgroundColor: "var(--cream)"}}>
+      <Stack spacing={2} sx={{pt: 4, pb: 10, pl: 4, pr: 4, borderTop: "2px solid var(--brown)", flex: 100, minHeight: 0, backgroundColor: "var(--cream)"}}>
         {/* ★ CHANGED — added minHeight: 0 here */}
         <Stack direction="row" sx={{width: "100%"}}>
           <Typography variant="h2" sx={{flex: 1, color: "var(--red)"}}>Quests</Typography>
@@ -46,6 +47,7 @@ export default function QuestsScreen() {
           <NavBar/>
         </Stack>
       </Stack>
+      <DeleteQuestModal />
     </Stack>
   );
 }
