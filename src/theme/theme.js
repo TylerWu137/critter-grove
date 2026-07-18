@@ -18,7 +18,7 @@ const theme = createTheme({
 
     h23: {
       fontFamily: '"Fredoka One", sans-serif',
-      fontWeight: 350,
+      fontWeight: 400,
       fontSize: "2rem"
     },
 
@@ -50,6 +50,12 @@ const theme = createTheme({
       fontFamily: '"Nunito", sans-serif',
       fontWeight: 300,
       fontSize: "0.8rem"
+    },
+
+    text: {
+      fontFamily: '"Nunito", sans-serif',
+      fontWeight: 500,
+      fontSize: "1rem"
     },
 
     caption: {

@@ -39,9 +39,9 @@ export default function QuestsScreen() {
                 "center" to "stretch" — "center" was letting each QuestsSection
                 shrink to its own content height instead of filling the row,
                 which independently would have caused growing/no-scroll too */}
-            <QuestsSection section={"daily"} />
-            <QuestsSection section={"epic"} />
-            <QuestsSection section={"side"} />
+            <QuestsSection section={"daily"} search={search} />
+            <QuestsSection section={"epic"} search={search} />
+            <QuestsSection section={"side"} search={search} />
           </Stack>
           <NavBar/>
         </Stack>

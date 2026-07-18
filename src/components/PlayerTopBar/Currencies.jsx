@@ -31,9 +31,9 @@ export default function Currencies({acorns, treats, flowers}) {
         sx={{
           position: "absolute",
           top: "0%",
-          left: "-7.5%",
+          left: "-10%",
 
-          width: "15%",
+          width: "20%",
           aspectRatio: "1 / 1",
 
           bgcolor: "var(--cream)",

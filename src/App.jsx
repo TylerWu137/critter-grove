@@ -9,22 +9,25 @@ import CalendarScreen from "./screens/CalendarScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import JournalScreen from "./screens/JournalScreen";
 import { ProfileProvider } from "./context/ProfileContext";
+import { QuestsProvider } from "./context/QuestsContext";
 
 export default function App() {
   return (
     <ProfileProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<WelcomeScreen />} />
-          <Route path="/login" element={<LoginScreen />} />
-          <Route path="/signup" element={<SignUpScreen />} />
-          <Route path="/home" element={<HomeScreen />} />
-          <Route path="/quests" element={<QuestsScreen />} />
-          <Route path="/calendar" element={<CalendarScreen />} />
-          <Route path="/settings" element={<SettingsScreen />} />
-          <Route path="/journal" element={<JournalScreen />} />
-        </Routes>
-      </BrowserRouter>
+      <QuestsProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<WelcomeScreen />} />
+            <Route path="/login" element={<LoginScreen />} />
+            <Route path="/signup" element={<SignUpScreen />} />
+            <Route path="/home" element={<HomeScreen />} />
+            <Route path="/quests" element={<QuestsScreen />} />
+            <Route path="/calendar" element={<CalendarScreen />} />
+            <Route path="/settings" element={<SettingsScreen />} />
+            <Route path="/journal" element={<JournalScreen />} />
+          </Routes>
+        </BrowserRouter>
+      </QuestsProvider>
     </ProfileProvider>
   );
 }

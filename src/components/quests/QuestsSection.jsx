@@ -1,23 +1,24 @@
 import {Stack, Box, Typography } from "@mui/material";
 
+import { useQuests } from "../../context/QuestsContext";
 import QuestCard from "./QuestCard"
 
-export default function QuestsSection({section}) {
+export default function QuestsSection({section, search = ""}) {
+  const { getQuestsByType } = useQuests();
+  const sectionQuests = getQuestsByType(section).filter((quest) =>
+    quest.name.toLowerCase().includes(search.toLowerCase())
+  ); // ★ CHANGED — added search filtering, applied after the incomplete/completed split
+
   return (
     <Stack spacing={1} sx={{flex: 1, height: "100%"}}>
       <Typography variant="h23" sx={{pl: 2, textTransform: "capitalize", color: "var(--brown)"}}>{section} Quests</Typography>
-
-      {/* ★ ADDED — outer wrapper: owns the border, radius, and clipping.
-          overflow:hidden here is what actually hides anything (including
-          the scrollbar) that would otherwise poke past the rounded corners. */}
       <Box sx={{ borderRadius: 4, height: "100%", minHeight: 0, border: "2px solid var(--brown)", overflow: "hidden" }}>
-        {/* ★ CHANGED — added minHeight:0 to both this Box and the inner Stack below */}
         <Stack
           spacing={2}
           sx={{
             height: "100%",
             width: "auto",
-            minHeight: 0, // ★ ADDED — without this, content height overrides the flex constraint and the box just grows
+            minHeight: 0,
             p: 1,
             pl: 2,
             mr: -0.5,
@@ -41,15 +42,14 @@ export default function QuestsSection({section}) {
             },
           }}
         >
-          <QuestCard quest={{name: "quest 1"}}/>
-          <QuestCard quest={{name: "quest 2"}}/>
-          <QuestCard quest={{name: "quest 2"}}/>
-          <QuestCard quest={{name: "quest 2"}}/>
-          <QuestCard quest={{name: "quest 2"}}/>
-          <QuestCard quest={{name: "quest 2"}}/>
-          <QuestCard quest={{name: "quest 2"}}/>
-          <QuestCard quest={{name: "quest 2"}}/>
-          <QuestCard quest={{name: "quest 3"}}/>
+          {/* ★ CHANGED — was 9 hardcoded <QuestCard quest={{name: "quest N"}}/> lines */}
+          {sectionQuests.map((quest) => (
+            <QuestCard key={quest.id} quest={quest} />
+          ))}
+          {/* ★ ADDED — guarantees room for the last card to fully scroll
+              into view; overflow:hidden on the outer Box + the negative
+              mr trick can otherwise clip the last few pixels */}
+          <Box sx={{ flexShrink: 0, height: 8 }} />
         </Stack>
       </Box>
     </Stack>
