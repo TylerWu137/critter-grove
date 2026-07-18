@@ -20,7 +20,7 @@ export default function QuestsSection({section, search = ""}) {
             width: "auto",
             minHeight: 0,
             p: 1,
-            pl: 2,
+            pt: 2,
             mr: -0.5,
             overflowY: "scroll",
             "&::-webkit-scrollbar": {
