@@ -218,7 +218,11 @@ export default function AddQuestPopover() {
               onChange={(e) => setDate(e.target.value)}
               size="small"
               disabled={isDaily}
-              sx={{ flex: 1, minWidth: 0, opacity: isDaily ? 0.4 : 1 }}
+              sx={{ flex: 1, minWidth: 0, opacity: isDaily ? 0.4 : 1,
+                "& .MuiOutlinedInput-input": {
+                  py: 0.8,
+                },
+               }}
             />
 
             <TextField
@@ -227,7 +231,11 @@ export default function AddQuestPopover() {
               onChange={(e) => setTime(e.target.value)}
               size="small"
               disabled={isDaily}
-              sx={{ flex: 1, minWidth: 0, opacity: isDaily ? 0.4 : 1 }}
+              sx={{ flex: 1, minWidth: 0, opacity: isDaily ? 0.4 : 1,
+                "& .MuiOutlinedInput-input": {
+                  py: 0.8,
+                },
+               }}
             />
           </Stack>
         </Stack>

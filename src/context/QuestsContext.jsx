@@ -80,6 +80,12 @@ export function QuestsProvider({ children }) {
     ]);
   };
 
+  const editQuest = (questId, updates) => {
+  setQuests((items) =>
+    items.map((q) => (q.id === questId ? { ...q, ...updates } : q))
+  );
+};
+
   const deleteQuest = (questId) => {
     setQuests((items) => items.filter((q) => q.id !== questId));
   };
@@ -91,6 +97,7 @@ export function QuestsProvider({ children }) {
     getQuestsByType,
     toggleQuestCompletion,
     addQuest,
+    editQuest,
     deleteQuest,
   };
 
