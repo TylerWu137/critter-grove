@@ -28,7 +28,13 @@ export default function QuestCard({quest}) {
           <RadioButtonUncheckedIcon sx={{fontSize: "medium", color: "var(--brown)"}}/>
         )}
       </IconButton>
-      <Stack direction="row" spacing={1} sx={{flex: 1, px: 1, py: 1.5, alignItems: "center", border: "1px solid var(--brown)", borderRadius: 2}}>
+      <Stack direction="row" spacing={1} sx={{
+        flex: 1, 
+        px: 1, py: 1.5, 
+        alignItems: "center", 
+        border: "1px solid",  borderColor: tag?.color ?? "var(--brown)", borderRadius: 2,
+        opacity: quest.isCompleted ? .5 : 1,
+      }}>
         <Typography
           variant="text"
           sx={{

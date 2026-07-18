@@ -75,13 +75,14 @@ export default function AddQuestPopover() {
         slotProps={{
           paper: {
             sx: {
-              mt: 1.5, // room for the triangle pointer
+              mt: 2, // room for the triangle pointer
               width: "30vw", // ★ ADDED — constrains the actual popover box itself
               maxWidth: "30vw", // ★ ADDED — belt-and-suspenders in case something else sets a competing max-width
               overflow: "visible",
               borderRadius: 3,
               border: "2px solid var(--brown)",
               backgroundColor: "var(--cream)",
+              boxShadow: "1",
               p: 2,
               boxSizing: "border-box", // ★ ADDED — so padding doesn't push the box past 40vw
               position: "relative",
