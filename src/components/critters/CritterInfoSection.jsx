@@ -20,7 +20,7 @@ export default function CritterInfoSection() {
           <Typography variant="body1" sx={{ color: "var(--brown)" }}>Lv. {selectedCritter.level}</Typography>
         </Box>
         <Box sx={{flex: 1}}/>
-        <Stack direction="row" spacing={3} sx={{ width: "100%", alignItems: "center" }}>
+        <Stack direction="row" spacing={2} sx={{ width: "100%", alignItems: "center" }}>
           <LinearProgress
             variant="determinate"
             value={progress}
@@ -36,8 +36,8 @@ export default function CritterInfoSection() {
             }}
           />
           <Stack direction="row" spacing={0.5}>
-            <Typography variant="body2" sx={{color: "var(--red)"}}>{selectedCritter.xp}</Typography>
-            <Typography variant="body2" sx={{ color: "var(--brown)" }}>
+            <Typography variant="body3" sx={{color: "var(--red)"}}>{selectedCritter.xp}</Typography>
+            <Typography variant="body3" sx={{ color: "var(--brown)" }}>
               / {xpForNextLevel} XP
             </Typography>
           </Stack>

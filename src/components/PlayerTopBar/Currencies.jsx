@@ -13,15 +13,15 @@ export default function Currencies({acorns, treats, flowers}) {
           bgcolor: "var(--bubble-shadow)",
           borderRadius: 2,
           pl: "20%",
-          pt: "1%",
+          pt: "0.5%",
           pr: "5%",
-          pb: "1%",
+          pb: "0.5%",
 
           display: "flex",
           justifyContent: "flex-end"
         }}
       >
-        <Typography variant="body1" sx={{ color: "var(--cream)" }}>
+        <Typography variant="body2" sx={{ color: "var(--cream)" }}>
           {amount}
         </Typography>
       </Box>
@@ -46,7 +46,7 @@ export default function Currencies({acorns, treats, flowers}) {
   );
 
   return (
-    <Stack spacing={1} sx={{width: "15vw"}}>
+    <Stack spacing={1} sx={{width: "10vw"}}>
       {CurrencyCard("S", acorns)}
       {CurrencyCard("T", treats)}
       {CurrencyCard("F", flowers)}

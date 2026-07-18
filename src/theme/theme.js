@@ -16,6 +16,12 @@ const theme = createTheme({
       fontSize: "2.5rem"
     },
 
+    h23: {
+      fontFamily: '"Fredoka One", sans-serif',
+      fontWeight: 350,
+      fontSize: "2rem"
+    },
+
     h3: {
       fontFamily: '"Fredoka One", sans-serif',
       fontWeight: 300,
@@ -37,7 +43,7 @@ const theme = createTheme({
     body2: {
       fontFamily: '"Nunito", sans-serif',
       fontWeight: 300,
-      fontSize: "1rem"
+      fontSize: "1.1rem"
     },
 
     body3: {
@@ -164,27 +170,27 @@ const theme = createTheme({
           },
 
           "& .MuiOutlinedInput-notchedOutline": {
-            borderColor: "var(--brown)",
+            borderColor: "var(--light-brown)",
             borderWidth: 1.5,
           },
 
           "&:hover .MuiOutlinedInput-notchedOutline": {
             borderColor: "var(--brown)",
-            borderWidth: 2,
+            borderWidth: 1.5,
           },
 
           "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-            borderColor: "var(--red)",
+            borderColor: "var(--brown)",
             borderWidth: 2,
           },
           "&.Mui-focused:hover .MuiOutlinedInput-notchedOutline": {
-            borderColor: "var(--red)",
+            borderColor: "var(--brown)",
             borderWidth: 2,
           },
           "& input": {
             color: "var(--brown)",
             px: 6,
-            py: 4
+            py: 2
           },
         },
       },

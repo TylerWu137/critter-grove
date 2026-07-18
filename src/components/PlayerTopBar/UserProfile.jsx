@@ -8,7 +8,7 @@ export default function UserProfile({ name, currentXp, level }) {
       sx={{
         position: "absolute",
         width: "25%",
-        height: "50%",
+        height: "20%",
         left: "5%"
       }}
     >
@@ -20,12 +20,12 @@ export default function UserProfile({ name, currentXp, level }) {
           borderColor: "var(--brown)",
           borderRadius: 2,
           pl: "20%",
-          pt: "3%",
+          pt: "1.5%",
           pr: "5%",
-          pb: "3%"
+          pb: "1.5%"
         }}
       >
-        <Stack sx={{height: "92%" }}>
+        <Stack sx={{height: "95%" }}>
           <Box sx={{ display: "flex", flexDirection: "row", alignItems: "baseline", gap: 3 }}>
               <Typography variant="h3" sx={{ color: "var(--brown)" }}>{name}</Typography>
               <Typography variant="body1" sx={{ color: "var(--brown)" }}>Lv. {level}</Typography>
@@ -47,8 +47,8 @@ export default function UserProfile({ name, currentXp, level }) {
               }}
             />
             <Stack direction="row" spacing={0.5}>
-              <Typography variant="body2" sx={{color: "var(--red)"}}>{currentXp}</Typography>
-              <Typography variant="body2" sx={{ color: "var(--brown)" }}>
+              <Typography variant="body3" sx={{color: "var(--red)"}}>{currentXp}</Typography>
+              <Typography variant="body3" sx={{ color: "var(--brown)" }}>
                 / {xpForNextLevel} XP
               </Typography>
             </Stack>
@@ -61,9 +61,9 @@ export default function UserProfile({ name, currentXp, level }) {
         sx={{
           position: "absolute",
           top: "0",
-          left: "-15%",
+          left: "-12.5%",
 
-          width: "30%",
+          width: "25%",
           aspectRatio: "1 / 1",
           borderRadius: "50%",
 
