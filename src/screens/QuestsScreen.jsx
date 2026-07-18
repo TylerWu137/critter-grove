@@ -4,7 +4,7 @@ import { useState } from "react";
 import PlayerTopBar from "../components/PlayerTopBar/PlayerTopBar"
 import NavBar from "../components/common/NavBar";
 import HelpButton from "../components/common/HelpButton"
-import AddButton from "../components/common/AddButton"
+import AddQuestPopover from "../components/quests/AddQuestPopover"
 import QuestsSection from "../components/quests/QuestsSection"
 
 export default function QuestsScreen() {
@@ -18,7 +18,7 @@ export default function QuestsScreen() {
         <Stack direction="row" sx={{width: "100%"}}>
           <Typography variant="h2" sx={{flex: 1, color: "var(--red)"}}>Quests</Typography>
           <Stack direction="row" spacing={2} sx={{flex: 5, justifyContent: "center"}}>
-            <AddButton />
+            <AddQuestPopover />
             <TextField 
               placeholder="Search"
               value={search}

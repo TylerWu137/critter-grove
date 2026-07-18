@@ -193,6 +193,16 @@ const theme = createTheme({
             borderColor: "var(--brown)",
             borderWidth: 2,
           },
+
+          // ★ ADDED — without this, hovering a disabled field would still
+          // pick up the plain "&:hover" rule above and turn brown, even
+          // though the field isn't interactive. This reverts it back to
+          // the same look as the default, non-hover, non-disabled state.
+          "&.Mui-disabled:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: "var(--light-brown)",
+            borderWidth: 1.5,
+          },
+
           "& input": {
             color: "var(--brown)",
             px: 6,
