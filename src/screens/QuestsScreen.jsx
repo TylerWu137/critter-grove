@@ -5,6 +5,7 @@ import PlayerTopBar from "../components/PlayerTopBar/PlayerTopBar"
 import NavBar from "../components/common/NavBar";
 import HelpButton from "../components/common/HelpButton"
 import AddQuestPopover from "../components/quests/AddQuestPopover"
+import TagsSection from "../components/quests/TagsSection"
 import QuestsSection from "../components/quests/QuestsSection"
 import DeleteQuestModal from "../components/quests/DeleteQuestModal";
 
@@ -31,15 +32,16 @@ export default function QuestsScreen() {
           </Stack>
           <HelpButton sx={{flex: 1}}/>
         </Stack>
-        <Stack sx={{flex: 1, minHeight: 0, width: "100%", alignItems: "center"}}>
+        <Stack sx={{flex: 1, minHeight: 0, width: "100%"}}>
           {/* ★ CHANGED — added minHeight: 0 here — this is the direct parent
               controlling QuestsSection's available height, so it was the
               most important missing piece */}
-          <Stack direction="row" spacing={3} sx={{flex: 1, minHeight: 0, alignItems: "stretch", width: "80%"}}>
+          <Stack direction="row" spacing={3} sx={{flex: 1, minHeight: 0, alignItems: "stretch", width: "90%"}}>
             {/* ★ CHANGED — added minHeight: 0; also changed alignItems from
                 "center" to "stretch" — "center" was letting each QuestsSection
                 shrink to its own content height instead of filling the row,
                 which independently would have caused growing/no-scroll too */}
+            <TagsSection />
             <QuestsSection section={"daily"} search={search} />
             <QuestsSection section={"epic"} search={search} />
             <QuestsSection section={"side"} search={search} />

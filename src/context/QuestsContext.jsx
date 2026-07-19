@@ -1,11 +1,10 @@
 import { createContext, useContext, useState } from "react";
 
 import { quests as initialQuests } from "../data/quests";
-import { questTags } from "../data/questTags";
+import { questTags as initialQuestTags } from "../data/questTags";
 
 const QuestsContext = createContext(null);
 
-// placeholder until real auth exists -- swap for AuthContext's currentUserId later
 const CURRENT_USER_ID = 1;
 
 export function QuestsProvider({ children }) {
@@ -13,22 +12,47 @@ export function QuestsProvider({ children }) {
     initialQuests.filter((q) => q.userId === CURRENT_USER_ID)
   );
 
-  // ★ ADDED — which quest (if any) is currently in edit mode. Centralizing
-  // this (rather than each QuestCard tracking its own isEditing bool) means
-  // only one card can be in edit mode at a time, app-wide.
-  const [editingQuestId, setEditingQuestId] = useState(null);
+  // ★ CHANGED — was a static import used directly; now state, since
+  // addTag needs to be able to grow this list at runtime
+  const [questTags, setQuestTags] = useState(initialQuestTags);
 
-  // ★ ADDED — mirrors CrittersContext's releaseModalOpen/selectedCritter
-  // pattern: a single quest reference + open flag, so ONE delete modal can
-  // be rendered once for the whole app instead of once per QuestCard.
+  // ★ ADDED — which tag checkboxes are currently checked. Lives here
+  // (not in TagsSection) because all three QuestsSections need to react
+  // to it simultaneously — it's shared filter state, not local UI state.
+  const [selectedTagIds, setSelectedTagIds] = useState([]);
+
+  const [editingQuestId, setEditingQuestId] = useState(null);
   const [questToDelete, setQuestToDelete] = useState(null);
   const deleteModalOpen = questToDelete !== null;
 
-  // static lookup — tags are shared reference data, not per-user state
   const getTagById = (tagId) => questTags.find((t) => t.id === tagId) ?? null;
 
+  // ★ ADDED — checkbox toggle: adds/removes a tag id from the filter set
+  const toggleTagFilter = (tagId) => {
+    setSelectedTagIds((prev) =>
+      prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId]
+    );
+  };
+
+  // ★ ADDED — appends a new tag; id generation mirrors addQuest's pattern
+  const addTag = (name) => {
+    setQuestTags((prev) => [
+      ...prev,
+      { id: Math.max(0, ...prev.map((t) => t.id)) + 1, name, color: "var(--brown)" },
+    ]);
+  };
+
+  // ★ CHANGED — now also filters by selectedTagIds before the
+  // incomplete/completed split. Empty selectedTagIds = show everything
+  // (matches "if no tags are checked, all quests are shown").
   const getQuestsByType = (type) => {
-    const filtered = quests.filter((q) => q.type === type);
+    const filtered = quests
+      .filter((q) => q.type === type)
+      .filter(
+        (q) =>
+          selectedTagIds.length === 0 ||
+          (q.tagId !== null && selectedTagIds.includes(q.tagId))
+      );
     const incomplete = filtered.filter((q) => !q.isCompleted);
     const completed = filtered.filter((q) => q.isCompleted);
     return [...incomplete, ...completed];
@@ -85,11 +109,9 @@ export function QuestsProvider({ children }) {
     setQuests((items) => items.filter((q) => q.id !== questId));
   };
 
-  // ★ ADDED — edit-mode controls
   const startEditingQuest = (questId) => setEditingQuestId(questId);
   const stopEditingQuest = () => setEditingQuestId(null);
 
-  // ★ ADDED — delete-modal controls (same shape as closeReleaseModal/releaseCritter)
   const openDeleteModal = (quest) => setQuestToDelete(quest);
   const closeDeleteModal = () => setQuestToDelete(null);
   const confirmDeleteQuest = () => {
@@ -108,7 +130,10 @@ export function QuestsProvider({ children }) {
     editQuest,
     deleteQuest,
 
-    // ★ ADDED
+    selectedTagIds,
+    toggleTagFilter,
+    addTag,
+
     editingQuestId,
     startEditingQuest,
     stopEditingQuest,
