@@ -9,4 +9,6 @@ export const questTags = [
   { id: 2, name: "family", color: "var(--green)" },
   { id: 3, name: "art", color: "var(--red)" },
   { id: 4, name: "nutrition", color: "var(--yellow)" },
+  { id: 5, name: "vinny", color: "var(--light-brown)" },
+  { id: 6, name: "cs", color: "var(--brown)" },
 ];
