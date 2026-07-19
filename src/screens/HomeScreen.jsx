@@ -56,7 +56,7 @@ export default function HomeScreen() {
               unmountOnExit
               sx={{
                 flex: 10,
-                width: "40%",
+                width: "30%",
                 alignSelf: "flex-end",
               }}
             >

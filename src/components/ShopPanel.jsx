@@ -1,16 +1,20 @@
-import {Stack, Box, Collapse, Button, Typography} from "@mui/material";
+import { Button, Typography } from "@mui/material";
 
-export default function ShopPanel({ activePanel, setActivePanel }) {
+import PanelShell from "./common/PanelShell";
+import InProgressPlaceholder from "./common/InProgressPlaceholder";
 
+export default function ShopPanel({ setActivePanel }) {
   return (
-    <Box sx={{border: 1}}>ShopPanel
-      <Button
-        variant="menu2"
-        sx={{height:"100%"}}
-        onClick={() => {setActivePanel(null);}}
-      >
-        <Typography variant="h4">Close</Typography>
-      </Button>
-    </Box>
+    <PanelShell
+      title="Shop"
+      footerLeft={
+        <Button variant="menu" onClick={() => setActivePanel(null)}>
+          <Typography variant="h3">Close</Typography>
+        </Button>
+      }
+      // no footerRight — Shop has no redirect target like Companions/CritterDex (yet)
+    >
+      <InProgressPlaceholder label="Shop" />
+    </PanelShell>
   );
 }

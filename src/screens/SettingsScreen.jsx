@@ -1,9 +1,10 @@
-import {Stack, Box} from "@mui/material";
+import ScreenShell from "../components/common/ScreenShell";
+import InProgressPlaceholder from "../components/common/InProgressPlaceholder";
 
 export default function SettingsScreen() {
   return (
-    <Box sx={{pt: 4, pb: 2, pl: 4, pr: 4, height: "100%", boxSizing: "border-box", backgroundColor: "var(--green)"}}>
-      Settings
-    </Box>
+    <ScreenShell title="Settings">
+      <InProgressPlaceholder label="Settings" />
+    </ScreenShell>
   );
 }
