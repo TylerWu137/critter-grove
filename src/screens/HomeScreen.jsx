@@ -1,4 +1,4 @@
-import {Stack, Box, Collapse} from "@mui/material";
+import {Stack, Box, Collapse, Fade} from "@mui/material";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -37,14 +37,33 @@ export default function HomeScreen() {
             pl: 4,
             pr: 4,
             height: "100%",
+            width: "100%",
             flex: 1,
             boxSizing: "border-box",
           }}
         >
-          <Stack sx={{ height: "100%" }}>
+          <Stack sx={{ height: "100%" , width: "100%"}}>
             <PlayerTopBar sx={{flex: 2}} activePanel = {activePanel} />
+            <Box sx={{flex: 1}} />
 
-            <TodayUpdates sx={{ flex: 6 }} />
+            <Fade
+              in={activePanel === null}
+              timeout={200}
+              easing={{
+                enter: "ease-in-out",
+                exit: "ease-in-out",
+              }}
+              unmountOnExit
+              sx={{
+                flex: 10,
+                width: "40%",
+                alignSelf: "flex-end",
+              }}
+            >
+              <Box>
+                <TodayUpdates sx={{height: "100%"}}/>
+              </Box>
+            </Fade>
 
             <Stack sx={{flex: 2}}>
               <Box sx={{flex: 1}}/>
