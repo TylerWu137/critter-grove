@@ -1,24 +1,28 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 import { quests as initialQuests } from "../data/quests";
 import { questTags as initialQuestTags } from "../data/questTags";
+import { useAuth } from "./AuthContext";
 
 const QuestsContext = createContext(null);
 
-const CURRENT_USER_ID = 1;
-
 export function QuestsProvider({ children }) {
+  const { currentUserId } = useAuth(); // ★ CHANGED — was a hardcoded CURRENT_USER_ID = 1
+
   const [quests, setQuests] = useState(() =>
-    initialQuests.filter((q) => q.userId === CURRENT_USER_ID)
+    initialQuests.filter((q) => q.userId === currentUserId)
   );
 
-  // ★ CHANGED — was a static import used directly; now state, since
-  // addTag needs to be able to grow this list at runtime
+  // ★ ADDED — rebuilds the quest list whenever the logged-in user changes,
+  // so a new session never shows the previous user's stale quests. A
+  // brand-new signup simply gets an empty list (no rows in quests.js yet),
+  // which is the correct behavior for a fresh account.
+  useEffect(() => {
+    setQuests(initialQuests.filter((q) => q.userId === currentUserId));
+  }, [currentUserId]);
+
   const [questTags, setQuestTags] = useState(initialQuestTags);
 
-  // ★ ADDED — which tag checkboxes are currently checked. Lives here
-  // (not in TagsSection) because all three QuestsSections need to react
-  // to it simultaneously — it's shared filter state, not local UI state.
   const [selectedTagIds, setSelectedTagIds] = useState([]);
 
   const [editingQuestId, setEditingQuestId] = useState(null);
@@ -27,14 +31,12 @@ export function QuestsProvider({ children }) {
 
   const getTagById = (tagId) => questTags.find((t) => t.id === tagId) ?? null;
 
-  // ★ ADDED — checkbox toggle: adds/removes a tag id from the filter set
   const toggleTagFilter = (tagId) => {
     setSelectedTagIds((prev) =>
       prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId]
     );
   };
 
-  // ★ ADDED — appends a new tag; id generation mirrors addQuest's pattern
   const addTag = (name) => {
     setQuestTags((prev) => [
       ...prev,
@@ -42,9 +44,6 @@ export function QuestsProvider({ children }) {
     ]);
   };
 
-  // ★ CHANGED — now also filters by selectedTagIds before the
-  // incomplete/completed split. Empty selectedTagIds = show everything
-  // (matches "if no tags are checked, all quests are shown").
   const getQuestsByType = (type) => {
     const filtered = quests
       .filter((q) => q.type === type)
@@ -89,7 +88,7 @@ export function QuestsProvider({ children }) {
       ...items,
       {
         id: Math.max(0, ...items.map((q) => q.id)) + 1,
-        userId: CURRENT_USER_ID,
+        userId: currentUserId, // ★ CHANGED — was CURRENT_USER_ID
         tagId: null,
         date: null,
         time: null,

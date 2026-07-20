@@ -10,24 +10,46 @@ import SettingsScreen from "./screens/SettingsScreen";
 import JournalScreen from "./screens/JournalScreen";
 import { ProfileProvider } from "./context/ProfileContext";
 import { QuestsProvider } from "./context/QuestsContext";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./context/ProtectedRoute"; // ★ ADDED
 
 export default function App() {
   return (
-    <ProfileProvider>
-      <QuestsProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<WelcomeScreen />} />
-            <Route path="/login" element={<LoginScreen />} />
-            <Route path="/signup" element={<SignUpScreen />} />
-            <Route path="/home" element={<HomeScreen />} />
-            <Route path="/quests" element={<QuestsScreen />} />
-            <Route path="/calendar" element={<CalendarScreen />} />
-            <Route path="/settings" element={<SettingsScreen />} />
-            <Route path="/journal" element={<JournalScreen />} />
-          </Routes>
-        </BrowserRouter>
-      </QuestsProvider>
-    </ProfileProvider>
+    <AuthProvider>
+      <ProfileProvider>
+        <QuestsProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<WelcomeScreen />} />
+              <Route path="/login" element={<LoginScreen />} />
+              <Route path="/signup" element={<SignUpScreen />} />
+
+              {/* ★ CHANGED — every screen below now requires isLoggedIn,
+                  redirecting to /login otherwise */}
+              <Route
+                path="/home"
+                element={<ProtectedRoute><HomeScreen /></ProtectedRoute>}
+              />
+              <Route
+                path="/quests"
+                element={<ProtectedRoute><QuestsScreen /></ProtectedRoute>}
+              />
+              <Route
+                path="/calendar"
+                element={<ProtectedRoute><CalendarScreen /></ProtectedRoute>}
+              />
+              <Route
+                path="/settings"
+                element={<ProtectedRoute><SettingsScreen /></ProtectedRoute>}
+              />
+              <Route
+                path="/journal"
+                element={<ProtectedRoute><JournalScreen /></ProtectedRoute>}
+              />
+            </Routes>
+          </BrowserRouter>
+        </QuestsProvider>
+      </ProfileProvider>
+    </AuthProvider>
   );
 }

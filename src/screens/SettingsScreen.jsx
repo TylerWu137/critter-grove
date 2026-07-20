@@ -6,16 +6,17 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import ScreenShell from "../components/common/ScreenShell";
 import InProgressPlaceholder from "../components/common/InProgressPlaceholder";
 import LogoutConfirmModal from "../components/common/LogoutConfirmModal";
+import { useAuth } from "../context/AuthContext"; // ★ ADDED
 
 export default function SettingsScreen() {
   const navigate = useNavigate();
+  const { logout } = useAuth(); // ★ ADDED
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
 
   const handleConfirmLogout = () => {
     setLogoutModalOpen(false);
-    // NOTE: there's no AuthContext yet, so this just navigates away —
-    // once real auth exists, clear the session/token here too before navigating
-    navigate("/");
+    logout(); // ★ CHANGED — was just a comment; now actually clears currentUserId
+    navigate("/login");
   };
 
   return (
@@ -29,7 +30,7 @@ export default function SettingsScreen() {
             sx={{
               color: "var(--red)",
               borderColor: "var(--red)",
-              "&:hover": { backgroundColor: "var(--red)", color: "var(--cream)", borderColor: "var(--red)" },
+              "&:hover": { backgroundColor: "var(--red)", color: "var(--cream)" },
             }}
           >
             <Typography variant="text">Log Out</Typography>
