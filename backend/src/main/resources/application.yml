@@ -1,0 +1,17 @@
+server:
+  port: ${PORT:8080}
+
+app:
+  jwt:
+    # ⚠️ In production, set JWT_SECRET as a real environment variable on
+    # Render — never commit a real secret. This default is only for local dev.
+    secret: ${JWT_SECRET:dev-only-secret-change-me-before-deploying-please-1234567890}
+    expiration-ms: 86400000 # 24 hours
+  cors:
+    # comma-separated list; set ALLOWED_ORIGINS on Render once you know your
+    # Vercel deployment URL, e.g. https://your-app.vercel.app
+    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:5173}
+
+logging:
+  level:
+    com.crittersapp.backend: DEBUG
