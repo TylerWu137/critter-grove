@@ -2,29 +2,23 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 import { quests as initialQuests } from "../data/quests";
 import { questTags as initialQuestTags } from "../data/questTags";
-import { useAuth } from "./AuthContext";
+import { useAuth } from "./AuthContext"; // ★ ADDED
 
 const QuestsContext = createContext(null);
+// ★ REMOVED — const CURRENT_USER_ID = 1;
 
 export function QuestsProvider({ children }) {
-  const { currentUserId } = useAuth(); // ★ CHANGED — was a hardcoded CURRENT_USER_ID = 1
+  const { currentUserId } = useAuth(); // ★ ADDED
 
-  const [quests, setQuests] = useState(() =>
-    initialQuests.filter((q) => q.userId === currentUserId)
-  );
+  const [quests, setQuests] = useState([]); // ★ CHANGED — starts empty, populated by the effect below
 
-  // ★ ADDED — rebuilds the quest list whenever the logged-in user changes,
-  // so a new session never shows the previous user's stale quests. A
-  // brand-new signup simply gets an empty list (no rows in quests.js yet),
-  // which is the correct behavior for a fresh account.
+  // ★ ADDED — reloads this user's quests whenever the logged-in user changes
   useEffect(() => {
     setQuests(initialQuests.filter((q) => q.userId === currentUserId));
   }, [currentUserId]);
 
   const [questTags, setQuestTags] = useState(initialQuestTags);
-
   const [selectedTagIds, setSelectedTagIds] = useState([]);
-
   const [editingQuestId, setEditingQuestId] = useState(null);
   const [questToDelete, setQuestToDelete] = useState(null);
   const deleteModalOpen = questToDelete !== null;

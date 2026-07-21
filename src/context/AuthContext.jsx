@@ -5,9 +5,7 @@ import { users as initialUsers } from "../data/users";
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  // users is now state (not a static import used directly) — signup needs
-  // to be able to grow this list at runtime, same pattern as questTags
-  // becoming state once addTag existed
+  // ★ CHANGED — users is now state, not a static import, so signUp can add to it
   const [users, setUsers] = useState(initialUsers);
 
   // starts logged out; null means "no one is logged in"
@@ -19,41 +17,39 @@ export function AuthProvider({ children }) {
 
   const isLoggedIn = currentUserId !== null;
 
+  const isEmailTaken = (email) => // ★ ADDED
+    users.some((u) => u.email.toLowerCase() === email.trim().toLowerCase());
+
   // ⚠️ DUMMY implementation — plaintext comparison against local data.
-  // Replace with a real API call once a backend exists; a real version
-  // should never compare plaintext passwords client-side at all.
-  // Returns true/false so the caller (LoginScreen) can show an error.
+  // Replace with a real API call once a backend exists.
   const login = (email, password) => {
     const user = users.find(
-      (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+      (u) => u.email.toLowerCase() === email.trim().toLowerCase() && u.password === password
     );
     if (!user) return false;
     setCurrentUserId(user.id);
     return true;
   };
 
-  // ⚠️ DUMMY implementation — same caveats as login: plaintext password,
-  // no backend, no persistence past a page refresh. Returns an object
-  // instead of a bare boolean so SignUpScreen can show *why* it failed
-  // (e.g. "that email's taken") rather than a generic error.
-  const signup = (email, username, password) => {
-    const emailTaken = users.some(
-      (u) => u.email.toLowerCase() === email.toLowerCase()
-    );
-    if (emailTaken) {
-      return { success: false, error: "An account with that email already exists." };
+  // ★ ADDED — creates a new user and logs them in immediately.
+  // Returns { success, userId } or { success: false, error }.
+  const signUp = (email, password) => {
+    if (!email.trim() || !password) {
+      return { success: false, error: "Email and password are required." };
+    }
+    if (isEmailTaken(email)) {
+      return { success: false, error: "That email is already registered." };
     }
 
     const newUser = {
-      id: Math.max(0, ...users.map((u) => u.id)) + 1, // mirrors addQuest/addTag's id-generation pattern
-      email,
-      username,
-      password,
+      id: Math.max(0, ...users.map((u) => u.id)) + 1,
+      email: email.trim(),
+      password, // ⚠️ dummy plaintext — see users.js caveat
     };
 
     setUsers((prev) => [...prev, newUser]);
-    setCurrentUserId(newUser.id);
-    return { success: true };
+    setCurrentUserId(newUser.id); // auto-login after sign up
+    return { success: true, userId: newUser.id };
   };
 
   const logout = () => {
@@ -64,8 +60,9 @@ export function AuthProvider({ children }) {
     currentUserId,
     currentUser,
     isLoggedIn,
+    isEmailTaken,
     login,
-    signup,
+    signUp,
     logout,
   };
 

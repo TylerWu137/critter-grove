@@ -1,79 +1,64 @@
-import {Stack, Box, Typography, Button, Link, ToggleButtonGroup, ToggleButton} from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { Stack, Box, Typography, Button, Link } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 import SplashscreenSkeleton from "../components/SplashscreenSkeleton";
 import UserAccountTextField from "../components/UserAccountTextField";
+import { useAuth } from "../context/AuthContext";
+import { useProfile } from "../context/ProfileContext";
 
 export default function SignUpScreen() {
   const navigate = useNavigate();
-  const [value, setValue] = useState("critter3");
+  const { signUp } = useAuth();
+  const { createProfile } = useProfile();
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSignUp = () => {
+    setError("");
+
+    if (password !== confirmPassword) {
+      setError("Passwords don't match.");
+      return;
+    }
+
+    // create the login (email/password) first
+    const authResult = signUp(email, password);
+    if (!authResult.success) {
+      setError(authResult.error);
+      return;
+    }
+
+    // then create the profile (checks name uniqueness) for that new user
+    const profileResult = createProfile(authResult.userId, name);
+    if (!profileResult.success) {
+      // NOTE: the user row from signUp() above already exists at this point
+      // (dummy in-memory data, no rollback implemented) — with a real
+      // backend this whole flow should be one transaction instead of two
+      // separate calls, so a failure here doesn't leave an orphaned user.
+      setError(profileResult.error);
+      return;
+    }
+
+    navigate("/home");
+  };
 
   return (
     <SplashscreenSkeleton
       leftContent={
-        <Stack spacing={2} sx={{ flex: 1, alignItems: "center"}}>
-          <Box
-            component="img"
-            src
-            alt="critter animation"
-            sx={{
-              flex: 1,
-              backgroundColor: "var(--cream)",
-              width: "80%"
-            }}
-          />
-          <ToggleButtonGroup
-            value={value}
-            exclusive
-            onChange={(e, newValue) => {
-              if (newValue !== null) setValue(newValue);
-            }}
-            sx={{
-              borderRadius: 4,
-              overflow: "hidden",
-              "& .MuiToggleButton-root": {
-                backgroundColor: "var(--cream)",
-                color: "var(--brown)",
-
-                "&.Mui-selected": {
-                  backgroundColor: "var(--cream)",
-                  borderTop: "2px solid var(--brown)",
-                  borderBottom: "2px solid var(--brown)",
-                  borderLeft: "none",
-                  borderRight: "none",
-                },
-
-                "&.Mui-selected:hover": {
-                  borderColor: "var(--brown)",
-                  backgroundColor: "var(--cream)"
-                },
-
-                "&:hover": {
-                  borderColor: "var(--brown)",
-                  backgroundColor: "var(--cream)"
-                },
-                "&:not(:last-of-type)::after": {
-                  content: '""',
-                  position: "absolute",
-                  right: 0,
-                  top: "0%",
-                  height: "100%",
-                  width: "2px",
-                  backgroundColor: "var(--light-brown)",
-                  opacity: 1,
-                },
-              },
-            }}
-          >
-            <ToggleButton value="critter1">__A__</ToggleButton>
-            <ToggleButton value="critter2">__B__</ToggleButton>
-            <ToggleButton value="critter3">__C__</ToggleButton>
-            <ToggleButton value="critter4">__D__</ToggleButton>
-            <ToggleButton value="critter5">__E__</ToggleButton>
-          </ToggleButtonGroup>
-          <Typography variant="body1" sx={{color:"var(--cream)"}}>Rescue your first critter!</Typography>
-        </Stack>
+        <Box
+          component="img"
+          src
+          alt="critter animation"
+          sx={{
+            flex: 1,
+            backgroundColor: "var(--cream)"
+          }}
+        />
       }
       rightContent={
         <Stack
@@ -87,15 +72,18 @@ export default function SignUpScreen() {
             <Typography variant="h2" sx={{color:"var(--brown)"}}>Sign Up</Typography>
             <Stack direction="row" spacing={0.5}>
               <Typography variant="caption" sx={{color: "var(--cream)"}}>Already have an account?</Typography>
-              <Link component="button" onClick={() => navigate("/login")} variant="caption" sx={{color: "var(--cream)", textDecorationColor: "inherit"}}>Login here!</Link>
+              <Link component="button" onClick={() => navigate("/login")} variant="caption" sx={{color: "var(--cream)", textDecorationColor: "inherit"}}>Log in here!</Link>
             </Stack>
           </Stack>
           <Stack spacing={2} sx={{width: "100%"}}>
-            <UserAccountTextField field="Email"/>
-            <UserAccountTextField field="Username"/>
-            <UserAccountTextField field="Password"/>
-            <UserAccountTextField field="Confirm Password"/>
+            <UserAccountTextField field="Name" value={name} onChange={(e) => setName(e.target.value)} />
+            <UserAccountTextField field="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <UserAccountTextField field="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <UserAccountTextField field="Confirm Password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
           </Stack>
+          {error && (
+            <Typography variant="body2" sx={{ color: "var(--red)" }}>{error}</Typography>
+          )}
           <Box sx={{flex: 1}}></Box>
           <Stack direction="row" sx={{width: "100%"}}>
             <Button
@@ -106,7 +94,7 @@ export default function SignUpScreen() {
             >Back</Button>
             <Box sx={{flex: 1}}/>
             <Button
-              onClick={() => navigate("/home")}
+              onClick={handleSignUp}
               sx={{ 
                 width: "30%",
               }}

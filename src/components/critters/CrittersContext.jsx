@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import {
   DndContext,
   closestCenter,
@@ -10,16 +10,24 @@ import { arrayMove } from "@dnd-kit/sortable";
 
 import { ownedCritters as initialOwnedCritters } from "../../data/ownedCritters";
 import { critterSpecies } from "../../data/critterSpecies";
+import { useAuth } from "../../context/AuthContext"; // ★ ADDED
 
 const MAX_COMPANIONS = 6;
-const CURRENT_USER_ID = 1; // placeholder until real auth exists
+// ★ REMOVED — const CURRENT_USER_ID = 1;
 
 const CrittersContext = createContext(null);
 
 export function CrittersProvider({ children }) {
-  const [ownedCritters, setOwnedCritters] = useState(() =>
-    initialOwnedCritters.filter((c) => c.userId === CURRENT_USER_ID)
-  );
+  const { currentUserId } = useAuth(); // ★ ADDED
+
+  const [ownedCritters, setOwnedCritters] = useState([]); // ★ CHANGED — starts empty, populated by the effect below
+
+  // ★ ADDED — (re)loads this user's critters whenever the logged-in user
+  // changes (login, logout, or switching accounts)
+  useEffect(() => {
+    setOwnedCritters(initialOwnedCritters.filter((c) => c.userId === currentUserId));
+  }, [currentUserId]);
+
   const companions = ownedCritters.filter((c) => c.isCompanion);
   const critters = ownedCritters.filter((c) => !c.isCompanion);
 
@@ -49,7 +57,7 @@ export function CrittersProvider({ children }) {
     const { active, over } = event;
     setActiveCritter(null);
     if (!over) return;
- 
+
     // dropping a critter directly onto an empty companion slot
     // (over.id looks like "empty-slot-0") adds it with no swap partner needed
     if (typeof over.id === "string" && over.id.startsWith("empty-slot-")) {
@@ -65,22 +73,22 @@ export function CrittersProvider({ children }) {
     const activeCritterData = getCritterById(active.id);
     const overCritterData = getCritterById(over.id);
     if (!activeCritterData || !overCritterData) return;
- 
+
     // block any interaction where both cards are critters (not companions)
     if (!activeCritterData.isCompanion && !overCritterData.isCompanion) {
       return;
     }
- 
+
     if (activeCritterData.isCompanion === overCritterData.isCompanion) {
       // both companions — reorder within companions
       setOwnedCritters((items) => {
         const companionItems = items.filter((c) => c.isCompanion);
         const otherItems = items.filter((c) => !c.isCompanion);
- 
+
         const oldIndex = companionItems.findIndex((c) => c.id === active.id);
         const newIndex = companionItems.findIndex((c) => c.id === over.id);
         if (oldIndex === -1 || newIndex === -1) return items;
- 
+
         const reordered = arrayMove(companionItems, oldIndex, newIndex);
         return [...reordered, ...otherItems];
       });
@@ -147,7 +155,7 @@ export function CrittersProvider({ children }) {
       setPickingCompanion(false);
       return;
     }
- 
+
     setOwnedCritters((items) =>
       items.map((c) => {
         if (c.id === selectedCritter.id) return { ...c, isCompanion: true };
@@ -155,8 +163,8 @@ export function CrittersProvider({ children }) {
         return c;
       })
     );
- 
-    setSelectedCritter({ ...selectedCritter, isCompanion: true }); // ★ ADDED — keep the info panel in sync
+
+    setSelectedCritter({ ...selectedCritter, isCompanion: true });
     setPickingCompanion(false);
   };
 
@@ -166,7 +174,7 @@ export function CrittersProvider({ children }) {
     setSelectedCritter(null);
     setViewingFullInfo(false);
   };
- 
+
   // used by CritterDex cards: selects a critter AND flags that
   // CritterInfoSection should replace the whole panel body, not just a section
   const viewCritterFullInfo = (critter) => {

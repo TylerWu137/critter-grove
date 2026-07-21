@@ -1,118 +1,140 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState } from "react";
 
-import { users } from "../data/users";
-import { profiles } from "../data/profiles";
+import { profiles as initialProfiles } from "../data/profiles";
 import { useAuth } from "./AuthContext";
 
 const ProfileContext = createContext(null);
 
-// builds the profile for a given user id — merges the matching
-// users.js + profiles.js rows, same as before. NEW: falls back to a
-// default starter profile if no profiles.js row exists yet (this
-// happens for any user created via signup, since profiles.js is static
-// dummy data and can't grow at runtime the way users.js/quests.js do).
-function buildProfileFor(userId) {
-  if (!userId) return null;
+export function ProfileProvider({ children }) {
+  const { currentUserId, currentUser } = useAuth();
 
-  const user = users.find((u) => u.id === userId);
-  if (!user) return null;
+  // ★ CHANGED — profiles is the single source of truth (like ownedCritters
+  // in CrittersContext); `profile` below is DERIVED from it each render,
+  // not kept as separate state. This fixes a real bug the old version had:
+  // renameProfile/addXp/etc only ever updated a standalone `profile` object,
+  // never persisting back into a `profiles` list — so a rename would vanish
+  // on next login, and sign-up's name-uniqueness check would never see it.
+  const [profiles, setProfiles] = useState(initialProfiles);
 
-  const profileData = profiles.find((p) => p.userId === userId);
+  const profileData = currentUserId !== null
+    ? profiles.find((p) => p.userId === currentUserId)
+    : null;
 
-  if (!profileData) {
-    // ⚠️ ASSUMPTION — I don't have profiles.js's actual shape, so this is
-    // a best-guess default (level 1, 0 xp/currency) for brand-new signups.
-    // Adjust the starting values here if profiles.js's real defaults differ.
-    return {
-      userId: user.id,
-      email: user.email,
-      profileId: null,
-      name: user.username ?? user.email,
+  const profile = profileData && currentUser
+    ? {
+        userId: currentUser.id,
+        email: currentUser.email,
+        profileId: profileData.id,
+        name: profileData.name,
+        level: profileData.level,
+        xp: profileData.xp,
+        acorns: profileData.acorns,
+        treats: profileData.treats,
+        flowers: profileData.flowers,
+      }
+    : null;
+
+  const isNameTaken = (name) => // ★ ADDED
+    profiles.some((p) => p.name.trim().toLowerCase() === name.trim().toLowerCase());
+
+  // ★ ADDED — creates a new profile row for a freshly signed-up user.
+  // Returns { success: true } or { success: false, error }.
+  const createProfile = (userId, name) => {
+    if (!name.trim()) {
+      return { success: false, error: "A name is required." };
+    }
+    if (isNameTaken(name)) {
+      return { success: false, error: "That name is already taken." };
+    }
+
+    const newProfile = {
+      id: Math.max(0, ...profiles.map((p) => p.id)) + 1,
+      userId,
+      name: name.trim(),
       level: 1,
       xp: 0,
       acorns: 0,
       treats: 0,
       flowers: 0,
     };
-  }
-
-  return {
-    userId: user.id,
-    email: user.email,
-    profileId: profileData.id,
-    name: profileData.name,
-    level: profileData.level,
-    xp: profileData.xp,
-    acorns: profileData.acorns,
-    treats: profileData.treats,
-    flowers: profileData.flowers,
+    setProfiles((prev) => [...prev, newProfile]);
+    return { success: true };
   };
-}
-
-export function ProfileProvider({ children }) {
-  const { currentUserId } = useAuth(); // ★ CHANGED — was a hardcoded CURRENT_USER_ID = 1
-
-  const [profile, setProfile] = useState(() => buildProfileFor(currentUserId));
-
-  // ★ ADDED — rebuilds the profile whenever the logged-in user changes
-  // (login, logout, or switching accounts), so a new session never shows
-  // the previous user's stale profile data
-  useEffect(() => {
-    setProfile(buildProfileFor(currentUserId));
-  }, [currentUserId]);
 
   const renameProfile = (newName) => {
-    setProfile((prev) => ({ ...prev, name: newName }));
+    if (!profile) return;
+    setProfiles((prev) =>
+      prev.map((p) => (p.id === profile.profileId ? { ...p, name: newName } : p))
+    );
   };
 
   // add xp, cascading level-ups whenever xp exceeds level*10
   const addXp = (amount) => {
-    setProfile((prev) => {
-      let newXp = prev.xp + amount;
-      let newLevel = prev.level;
-      while (newXp > newLevel * 10) {
-        newXp -= newLevel * 10;
-        newLevel++;
-      }
-      return { ...prev, xp: newXp, level: newLevel };
-    });
+    if (!profile) return;
+    setProfiles((prev) =>
+      prev.map((p) => {
+        if (p.id !== profile.profileId) return p;
+        let newXp = p.xp + amount;
+        let newLevel = p.level;
+        while (newXp > newLevel * 10) {
+          newXp -= newLevel * 10;
+          newLevel++;
+        }
+        return { ...p, xp: newXp, level: newLevel };
+      })
+    );
   };
 
   // earn currency -- currencyKey is "acorns" | "treats" | "flowers"
   const earnCurrency = (currencyKey, amount) => {
-    setProfile((prev) => ({ ...prev, [currencyKey]: prev[currencyKey] + amount }));
+    if (!profile) return;
+    setProfiles((prev) =>
+      prev.map((p) =>
+        p.id === profile.profileId ? { ...p, [currencyKey]: p[currencyKey] + amount } : p
+      )
+    );
   };
 
-  // spend currency -- returns false (and does nothing) if funds are insufficient,
-  // so callers can guard the rest of an action on the result
+  // spend currency -- returns false (and does nothing) if funds are insufficient
   const spendCurrency = (currencyKey, amount) => {
+    if (!profile) return false;
     if (profile[currencyKey] < amount) return false;
-    setProfile((prev) => ({ ...prev, [currencyKey]: prev[currencyKey] - amount }));
+    setProfiles((prev) =>
+      prev.map((p) =>
+        p.id === profile.profileId ? { ...p, [currencyKey]: p[currencyKey] - amount } : p
+      )
+    );
     return true;
   };
 
   // one atomic update for actions that grant both xp and currency at once
   const grantReward = ({ xp = 0, acorns = 0, treats = 0, flowers = 0 } = {}) => {
-    setProfile((prev) => {
-      let newXp = prev.xp + xp;
-      let newLevel = prev.level;
-      while (newXp > newLevel * 10) {
-        newXp -= newLevel * 10;
-        newLevel++;
-      }
-      return {
-        ...prev,
-        xp: newXp,
-        level: newLevel,
-        acorns: prev.acorns + acorns,
-        treats: prev.treats + treats,
-        flowers: prev.flowers + flowers,
-      };
-    });
+    if (!profile) return;
+    setProfiles((prev) =>
+      prev.map((p) => {
+        if (p.id !== profile.profileId) return p;
+        let newXp = p.xp + xp;
+        let newLevel = p.level;
+        while (newXp > newLevel * 10) {
+          newXp -= newLevel * 10;
+          newLevel++;
+        }
+        return {
+          ...p,
+          xp: newXp,
+          level: newLevel,
+          acorns: p.acorns + acorns,
+          treats: p.treats + treats,
+          flowers: p.flowers + flowers,
+        };
+      })
+    );
   };
 
   const value = {
     profile,
+    isNameTaken,
+    createProfile,
     renameProfile,
     addXp,
     earnCurrency,
