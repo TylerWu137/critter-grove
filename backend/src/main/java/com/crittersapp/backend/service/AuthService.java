@@ -52,7 +52,7 @@ public class AuthService {
 
     // used by the /api/auth/me endpoint — lets the frontend verify a stored
     // token is still valid and rehydrate "who's logged in" after a page refresh
-    public AuthResponse getCurrentUserInfo(Long userId) {
+    public AuthResponse getCurrentUserInfo(String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new InvalidCredentialsException("User not found."));
         // no need to issue a new token here, just echo back identity info;

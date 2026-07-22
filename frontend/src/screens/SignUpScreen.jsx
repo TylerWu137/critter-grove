@@ -18,7 +18,7 @@ export default function SignUpScreen() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
     setError("");
 
     if (password !== confirmPassword) {
@@ -26,20 +26,22 @@ export default function SignUpScreen() {
       return;
     }
 
-    // create the login (email/password) first
-    const authResult = signUp(email, password);
+    // ★ CHANGED — signUp() now hits the real backend and returns a
+    // promise; this must be awaited (was previously a synchronous local call)
+    const authResult = await signUp(email, password);
     if (!authResult.success) {
       setError(authResult.error);
       return;
     }
 
-    // then create the profile (checks name uniqueness) for that new user
+    // profile creation is still local/dummy for now — not yet migrated
+    // to the backend, so this stays synchronous
     const profileResult = createProfile(authResult.userId, name);
     if (!profileResult.success) {
-      // NOTE: the user row from signUp() above already exists at this point
-      // (dummy in-memory data, no rollback implemented) — with a real
-      // backend this whole flow should be one transaction instead of two
-      // separate calls, so a failure here doesn't leave an orphaned user.
+      // NOTE: the user now exists for real on the backend at this point —
+      // there's no rollback if profile creation fails here. Once profile
+      // creation also moves to the backend, this whole flow should become
+      // one atomic transaction server-side instead of two separate calls.
       setError(profileResult.error);
       return;
     }

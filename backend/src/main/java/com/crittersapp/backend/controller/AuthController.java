@@ -37,7 +37,7 @@ public class AuthController {
     // valid" and restore the logged-in state without re-entering credentials.
     @GetMapping("/me")
     public ResponseEntity<AuthResponse> me() {
-        Long userId = AuthenticatedUser.getCurrentUserId();
+        String userId = AuthenticatedUser.getCurrentUserId();
         AuthResponse response = authService.getCurrentUserInfo(userId);
         return ResponseEntity.ok(response);
     }

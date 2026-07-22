@@ -4,24 +4,25 @@ import { useNavigate } from "react-router-dom";
 
 import SplashscreenSkeleton from "../components/SplashscreenSkeleton";
 import UserAccountTextField from "../components/UserAccountTextField";
-import { useAuth } from "../context/AuthContext"; // ★ ADDED
+import { useAuth } from "../context/AuthContext";
 
 export default function LoginScreen() {
   const navigate = useNavigate();
-  const { login } = useAuth(); // ★ ADDED
+  const { login } = useAuth();
 
-  // ★ ADDED — controlled form fields + an error message to show on a failed attempt
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  // ★ ADDED — was just navigate("/home") with no credential check at all
-  const handleLogin = () => {
-    const success = login(email, password);
-    if (success) {
+  // ★ CHANGED — was: const success = login(email, password); (synchronous
+  // boolean). login() now hits a real API and returns a promise resolving
+  // to { success, error }, so this needs to be async and await the result.
+  const handleLogin = async () => {
+    const result = await login(email, password);
+    if (result.success) {
       navigate("/home");
     } else {
-      setError("Incorrect email or password.");
+      setError(result.error || "Incorrect email or password.");
     }
   };
 
@@ -59,7 +60,7 @@ export default function LoginScreen() {
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
-                setError(""); // ★ ADDED — clears a stale error as soon as they start correcting it
+                setError("");
               }}
             />
             <UserAccountTextField

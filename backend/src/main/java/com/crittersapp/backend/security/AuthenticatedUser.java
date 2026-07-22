@@ -7,11 +7,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 // back out cleanly wherever a controller/service needs it.
 public class AuthenticatedUser {
 
-    public static Long getCurrentUserId() {
+    public static String getCurrentUserId() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !(auth.getPrincipal() instanceof Long)) {
+        if (auth == null || !(auth.getPrincipal() instanceof String)) {
             return null;
         }
-        return (Long) auth.getPrincipal();
+        return (String) auth.getPrincipal();
     }
 }

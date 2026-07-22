@@ -5,25 +5,27 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 
 // ⚠️ TEMPORARY — in-memory storage, purely to test frontend<->backend
-// communication before a real database exists. Everything is lost on
-// restart. Method names deliberately mirror Spring Data JPA conventions
+// communication before MongoDB Atlas is wired up. Everything is lost on
+// restart. Method names deliberately mirror Spring Data conventions
 // (findByEmail, existsByEmail, save) so that swapping this out for a real
-// `interface UserRepository extends JpaRepository<User, Long>` later
+// `interface UserRepository extends MongoRepository<User, String>` later
 // requires little to no change in AuthService, which only calls these
-// method names — not this implementation.
+// method names — not this implementation. Ids are Strings (UUIDs here) to
+// match MongoDB's ObjectId shape, which MongoRepository will generate
+// automatically once that's wired up — this UUID generation is just a
+// stand-in for that.
 @Repository
 public class UserRepository {
 
-    private final ConcurrentHashMap<Long, User> users = new ConcurrentHashMap<>();
-    private final AtomicLong idSequence = new AtomicLong(0);
+    private final ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
 
     public User save(User user) {
         if (user.getId() == null) {
-            user.setId(idSequence.incrementAndGet());
+            user.setId(UUID.randomUUID().toString());
         }
         users.put(user.getId(), user);
         return user;
@@ -35,7 +37,7 @@ public class UserRepository {
                 .findFirst();
     }
 
-    public Optional<User> findById(Long id) {
+    public Optional<User> findById(String id) {
         return Optional.ofNullable(users.get(id));
     }
 
