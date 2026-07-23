@@ -9,6 +9,14 @@ export default function PlayerTopBar({ sx, activePanel }) {
 
   const { profile } = useProfile();
 
+  // ★ ADDED — guards against the brief window where profile is still null
+  // (auth/profile check in flight). Without this, destructuring
+  // profile.name below throws immediately on every reload, before
+  // ProfileContext has had a chance to resolve who's logged in.
+  if (!profile) {
+    return <Stack direction="row" sx={sx} />;
+  }
+
   return (
     <Stack direction="row" sx={sx}>
          <UserProfile

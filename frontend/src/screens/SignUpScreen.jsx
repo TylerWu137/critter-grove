@@ -5,12 +5,10 @@ import { useNavigate } from "react-router-dom";
 import SplashscreenSkeleton from "../components/SplashscreenSkeleton";
 import UserAccountTextField from "../components/UserAccountTextField";
 import { useAuth } from "../context/AuthContext";
-import { useProfile } from "../context/ProfileContext";
 
 export default function SignUpScreen() {
   const navigate = useNavigate();
   const { signUp } = useAuth();
-  const { createProfile } = useProfile();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -26,23 +24,12 @@ export default function SignUpScreen() {
       return;
     }
 
-    // ★ CHANGED — signUp() now hits the real backend and returns a
-    // promise; this must be awaited (was previously a synchronous local call)
+    // ★ CHANGED — signUp now takes name too; the backend creates BOTH the
+    // user and profile in one call (with server-side rollback if the name's
+    // taken), so there's no separate createProfile step anymore.
     const authResult = await signUp(email, password, name);
     if (!authResult.success) {
       setError(authResult.error);
-      return;
-    }
-
-    // profile creation is still local/dummy for now — not yet migrated
-    // to the backend, so this stays synchronous
-    const profileResult = createProfile(authResult.userId, name);
-    if (!profileResult.success) {
-      // NOTE: the user now exists for real on the backend at this point —
-      // there's no rollback if profile creation fails here. Once profile
-      // creation also moves to the backend, this whole flow should become
-      // one atomic transaction server-side instead of two separate calls.
-      setError(profileResult.error);
       return;
     }
 
