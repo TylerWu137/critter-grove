@@ -16,7 +16,7 @@ export const profiles = [
   {
     id: 1,
     userId: 1,
-    name: "Little Dragon",
+    name: "Little Drago",
     level: 18,
     xp: 80,
     acorns: 125,
