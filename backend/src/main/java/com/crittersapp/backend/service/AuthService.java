@@ -17,11 +17,18 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final ProfileService profileService; // ★ ADDED
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    public AuthService(
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            JwtUtil jwtUtil,
+            ProfileService profileService // ★ ADDED
+    ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.profileService = profileService; // ★ ADDED
     }
 
     public AuthResponse signUp(SignUpRequest request) {
@@ -33,6 +40,19 @@ public class AuthService {
         user.setEmail(request.getEmail());
         user.setPasswordHash(passwordEncoder.encode(request.getPassword())); // never store the raw password
         userRepository.save(user);
+
+        // ★ ADDED — compensating transaction: if profile creation fails
+        // (e.g. the requested name is already taken), delete the user we
+        // just created so we don't leave an orphaned account with no
+        // profile. Re-throwing the SAME exception preserves its type
+        // (NameAlreadyExistsException, etc.), so GlobalExceptionHandler
+        // still returns the correct, specific error to the client.
+        try {
+            profileService.createProfile(user.getId(), request.getName());
+        } catch (RuntimeException ex) {
+            userRepository.deleteById(user.getId());
+            throw ex;
+        }
 
         String token = jwtUtil.generateToken(user.getId());
         return new AuthResponse(token, user.getId(), user.getEmail());

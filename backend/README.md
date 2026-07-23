@@ -47,6 +47,103 @@ curl http://localhost:8080/api/auth/me \
   -H "Authorization: Bearer <paste token here>"
 ```
 
+# Profile testing
+export TOKEN="paste your token here"
+
+Now every test below can just reference $TOKEN.
+
+1. Rename the profile
+```bash
+curl -X PATCH http://localhost:8080/api/profile/name \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"name":"Sunny Dragon"}'
+```
+
+Expected: 200, updated profile with "name": "Sunny Dragon".
+
+2. Add XP — test the level-cascade math
+
+Since level 1's cap is level * 10 = 10, sending a big amount should trigger multiple level-ups in one call:
+
+```bash
+curl -X POST http://localhost:8080/api/profile/xp \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"amount":55}'
+```
+
+Expected: level should climb past 1 — walk through the math yourself to confirm: level 1 caps at 10 xp, level 2 at 20, level 3 at 30, etc. 55 total xp should land you at level 4 with 5 xp remaining (10+20+30 = 60 consumed getting to level 4's start... let me know what you actually get back and we can verify the cascade math is exactly right).
+
+3. Earn currency
+```bash
+curl -X POST http://localhost:8080/api/profile/currency/earn \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"currencyKey":"acorns","amount":50}'
+```
+Expected: 200, "acorns": 50.
+
+4. Spend currency — successful case
+```bash
+curl -X POST http://localhost:8080/api/profile/currency/spend \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"currencyKey":"acorns","amount":20}'
+```
+Expected: 200, "acorns": 30.
+
+5. Spend currency — insufficient funds (should fail cleanly)
+```bash
+curl -X POST http://localhost:8080/api/profile/currency/spend \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"currencyKey":"acorns","amount":9999}'
+```
+Expected: 400, {"message": "Not enough acorns."} — confirms InsufficientFundsException is wired correctly, and that acorns weren't touched (spot-check with a GET /api/profile after this — should still show 30, not have gone negative).
+
+6. Invalid currency key
+```bash
+curl -X POST http://localhost:8080/api/profile/currency/earn \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"currencyKey":"gems","amount":10}'
+```
+Expected: 400, {"message": "Invalid currency key: gems"} — confirms the IllegalArgumentException handler catches this.
+
+7. Validation failures — blank name
+```bash
+curl -X PATCH http://localhost:8080/api/profile/name \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"name":""}'
+```
+Expected: 400, {"message": "A name is required"} — this is @NotBlank firing before your code even runs.
+
+8. Validation failures — negative XP
+```bash
+curl -X POST http://localhost:8080/api/profile/xp \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"amount":-5}'
+```
+Expected: 400, {"message": "Amount cannot be negative"}.
+
+9. No token at all — access control check
+```bash
+curl -i http://localhost:8080/api/profile
+```
+(the -i flag shows response headers/status, not just the body — useful here since we care about the status code specifically)
+
+Expected: should be rejected — either 401 or 403 depending on exactly how Spring Security's default unauthenticated-request handling behaves in your config (I haven't verified the precise default status code myself since I can't run this locally). Let me know which one you actually get — if it's 403 and you'd rather it be a more semantically correct 401 Unauthorized for "no/invalid credentials" specifically, that's a small addition (a custom AuthenticationEntryPoint in SecurityConfig) I can add.
+
+10. Invalid/garbage token
+```bash
+curl -i http://localhost:8080/api/profile \
+  -H "Authorization: Bearer not-a-real-token"
+```
+Expected: same rejection as #9 — JwtUtil.validateAndGetUserId should return null for a malformed token (it catches the parsing exception internally), so JwtAuthFilter never authenticates the request.
+
 ## Connecting from the frontend
 
 In `AuthContext.jsx`, replace the local in-memory `login`/`signUp` logic

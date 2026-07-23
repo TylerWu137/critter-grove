@@ -48,4 +48,11 @@ public class UserRepository {
     public List<User> findAll() {
         return List.copyOf(users.values());
     }
+
+    // ★ ADDED — used to roll back a just-created user if profile creation
+    // fails during sign-up (compensating transaction, since this in-memory
+    // store can't do a real cross-document atomic transaction)
+    public void deleteById(String id) {
+        users.remove(id);
+    }
 }
