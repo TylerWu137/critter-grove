@@ -28,7 +28,7 @@ export default function SignUpScreen() {
 
     // ★ CHANGED — signUp() now hits the real backend and returns a
     // promise; this must be awaited (was previously a synchronous local call)
-    const authResult = await signUp(email, password);
+    const authResult = await signUp(email, password, name);
     if (!authResult.success) {
       setError(authResult.error);
       return;

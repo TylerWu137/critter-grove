@@ -79,29 +79,29 @@ export function AuthProvider({ children }) {
 
   // ★ CHANGED — was local-array signup; now hits the real API and auto-logs-in
   // the same way the backend's signUp already does server-side.
-  const signUp = async (email, password) => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/auth/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+  const signUp = async (email, password, name) => {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/auth/signup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password, name }), // ★ CHANGED — added name
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (!res.ok) {
-        return { success: false, error: data.message || "Sign up failed." };
-      }
-
-      localStorage.setItem(TOKEN_STORAGE_KEY, data.token);
-      setToken(data.token);
-      setCurrentUserId(data.userId);
-      setCurrentUserEmail(data.email);
-      return { success: true, userId: data.userId };
-    } catch {
-      return { success: false, error: "Could not reach the server. Please try again." };
+    if (!res.ok) {
+      return { success: false, error: data.message || "Sign up failed." };
     }
-  };
+
+    localStorage.setItem(TOKEN_STORAGE_KEY, data.token);
+    setToken(data.token);
+    setCurrentUserId(data.userId);
+    setCurrentUserEmail(data.email);
+    return { success: true, userId: data.userId };
+  } catch {
+    return { success: false, error: "Could not reach the server. Please try again." };
+  }
+};
 
   const logout = () => {
     localStorage.removeItem(TOKEN_STORAGE_KEY);
