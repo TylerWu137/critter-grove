@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Stack, Typography, Checkbox, TextField, IconButton, Box } from "@mui/material";
+import { MuiColorInput } from "mui-color-input";
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import AddIcon from '@mui/icons-material/Add';
@@ -7,12 +8,14 @@ import AddIcon from '@mui/icons-material/Add';
 import { useQuests } from "../../context/QuestsContext";
 import AddButton from "../common/AddButton";
 import { useScrollEdges } from "../../hooks/useScrollEdges"; // ★ ADDED
+import ColorPicker from "../common/ColorPicker"
 
 export default function TagsSection({ sx }) {
   const { questTags, selectedTagIds, toggleTagFilter, addTag } = useQuests();
 
   const [isAdding, setIsAdding] = useState(false);
   const [newTagName, setNewTagName] = useState("");
+  const [color, setColor] = useState("#000000")
 
   // ★ ADDED — re-checks whenever the tag list length changes (e.g. after
   // adding a new tag), since that can change whether there's overflow at all
@@ -27,7 +30,7 @@ export default function TagsSection({ sx }) {
 
   const handleSave = () => {
     if (!newTagName.trim()) return;
-    addTag(newTagName.trim());
+    addTag(newTagName.trim(), color);
     setIsAdding(false);
     setNewTagName("");
   };
@@ -130,10 +133,9 @@ export default function TagsSection({ sx }) {
         
         <Box sx={{height: "4px"}} />
         {isAdding ? (
-          <Stack direction="row" spacing={1} sx={{ alignItems: "center", pl: 0.5 }}>
-            <IconButton onClick={handleCancel} sx={{ p: 0.5, color: "var(--brown)" }}>
-              <CloseIcon sx={{ fontSize: "18px" }} />
-            </IconButton>
+          <Stack direction="row" spacing={0} sx={{ alignItems: "center", pl: 0.5 }}>
+            <ColorPicker color={color} setColor={setColor}/>
+            <Box sx={{width: "4px"}}></Box>
             <TextField
               variant="standard"
               placeholder="Add new tag"
@@ -149,6 +151,9 @@ export default function TagsSection({ sx }) {
                 "& .MuiInput-underline:after": { borderBottomColor: "var(--brown)" },
               }}
             />
+            <IconButton onClick={handleCancel} sx={{ p: 0.5, color: "var(--brown)" }}>
+              <CloseIcon sx={{ fontSize: "18px" }} />
+            </IconButton>
             <IconButton onClick={handleSave} sx={{ p: 0.5, color: "var(--red)", flexShrink: 0 }}>
               <CheckIcon sx={{ fontSize: "18px" }} />
             </IconButton>

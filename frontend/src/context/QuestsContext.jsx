@@ -31,10 +31,10 @@ export function QuestsProvider({ children }) {
     );
   };
 
-  const addTag = (name) => {
+  const addTag = (name, color) => {
     setQuestTags((prev) => [
       ...prev,
-      { id: Math.max(0, ...prev.map((t) => t.id)) + 1, name, color: "var(--brown)" },
+      { id: Math.max(0, ...prev.map((t) => t.id)) + 1, name, color: color },
     ]);
   };
 
