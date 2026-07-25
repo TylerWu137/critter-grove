@@ -297,11 +297,7 @@ export default function QuestCard({ quest }) {
                 transform: "translateY(-50%) rotate(45deg)",
                 width: 16,
                 height: 16,
-                background: `linear-gradient(to bottom, ${
-                  hoveredButton === "edit" ? "var(--brown)" : "var(--cream)"
-                } 50%, ${
-                  hoveredButton === "delete" ? "var(--brown)" : "var(--cream)"
-                } 50%)`,
+                background: `var(--cream)`,
                 borderBottom: "2px solid var(--brown)",
                 borderLeft: "2px solid var(--brown)",
                 transition: "background 200ms ease",
@@ -310,7 +306,7 @@ export default function QuestCard({ quest }) {
           },
         }}
       >
-        <Stack sx={{ width: "auto", overflow: "hidden", borderRadius: 3 }}>
+        <Stack sx={{ width: "auto", overflow: "hidden", borderRadius: 2 }}>
           <Button
             onClick={handleEditClick}
             onMouseEnter={() => setHoveredButton("edit")}
