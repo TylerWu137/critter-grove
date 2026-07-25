@@ -17,7 +17,7 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(ex.getMessage()));
     }
 
-    @ExceptionHandler(NameAlreadyExistsException.class) // ★ ADDED
+    @ExceptionHandler(NameAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleNameExists(NameAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErrorResponse(ex.getMessage()));
@@ -29,21 +29,43 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(ex.getMessage()));
     }
 
-    @ExceptionHandler(ProfileNotFoundException.class) // ★ ADDED
+    @ExceptionHandler(ProfileNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleProfileNotFound(ProfileNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponse(ex.getMessage()));
     }
 
-    @ExceptionHandler(InsufficientFundsException.class) // ★ ADDED
+    @ExceptionHandler(InsufficientFundsException.class)
     public ResponseEntity<ErrorResponse> handleInsufficientFunds(InsufficientFundsException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(ex.getMessage()));
     }
 
-    // ★ ADDED — catches lighter validation/state checks thrown directly in
-    // ProfileService (e.g. "this user already has a profile") that don't
-    // warrant their own dedicated exception class
+    // ★ ADDED — quests/critters use this for "id doesn't exist at all"
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse(ex.getMessage()));
+    }
+
+    // ★ ADDED — the ownership-check failure: resource exists, but belongs
+    // to someone else. 403, not 404 — deliberately doesn't confirm/deny
+    // whether the resource exists to an unauthorized caller either way,
+    // but 403 is the semantically correct code for "you're not allowed to
+    // do this," distinct from "this doesn't exist"
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> handleForbidden(ForbiddenException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ErrorResponse(ex.getMessage()));
+    }
+
+    // ★ ADDED
+    @ExceptionHandler(CompanionLimitReachedException.class)
+    public ResponseEntity<ErrorResponse> handleCompanionLimitReached(CompanionLimitReachedException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(ex.getMessage()));
+    }
+
     @ExceptionHandler({IllegalArgumentException.class, IllegalStateException.class})
     public ResponseEntity<ErrorResponse> handleIllegalArgument(RuntimeException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
