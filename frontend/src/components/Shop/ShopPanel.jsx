@@ -1,7 +1,7 @@
 import { Button, Typography } from "@mui/material";
 
-import PanelShell from "./common/PanelShell";
-import InProgressPlaceholder from "./common/InProgressPlaceholder";
+import PanelShell from "../common/PanelShell";
+import InProgressPlaceholder from "../common/InProgressPlaceholder";
 
 export default function ShopPanel({ setActivePanel }) {
   return (

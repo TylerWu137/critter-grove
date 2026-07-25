@@ -1,14 +1,14 @@
-import { Stack, Box, Button, Typography } from "@mui/material";
+import { Button, Typography, Stack } from "@mui/material";
 import { useState } from "react";
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 
 import { CrittersProvider, useCritters } from "./CrittersContext";
-import CrittersMenuView from "./CrittersMenuView"
+import PanelMenuShell from "../common/PanelMenuShell"
 import CrittersCompanionsView from "./CrittersCompanionsView"
 import CrittersCritterDexView from "./CrittersCritterDexView"
 import PickCompanionBackdrop from "./PickCompanionBackdrop"
 import ReleaseConfirmModal from "./ReleaseConfirmModal"
-import HelpButton from "../common/HelpButton"
+import PanelShell from "../common/PanelShell" // ★ CHANGED — was importing HelpButton directly; that now lives inside PanelShell
 
 function capitalize(str) {
   return str[0].toUpperCase() + str.slice(1);
@@ -29,7 +29,11 @@ function CrittersPanelContent({ setActivePanel }) {
   const viewComponent = () => {
     switch (view) {
       case "critters":
-        return <CrittersMenuView view={view} setView={setView}/>;
+        return <PanelMenuShell setView={setView} 
+          description={"Vestibulum elementum, nibh nec tristique ullamcorper, magna sem ultrices tortor, id accumsan eros dui eu purus. Aliquam nisl lacus, sagittis sit amet augue in, tincidunt accumsa"}
+          section1={"Companions"}
+          section2={"CritterDex"}
+        />;
       case "companions":
         return <CrittersCompanionsView />;
       case "critterdex":
@@ -47,7 +51,7 @@ function CrittersPanelContent({ setActivePanel }) {
         otherView = "companions"; section = "Companions";
         break;
       case "critters":
-        return
+        return null; // ★ CHANGED — was bare `return`; null is the explicit "render nothing" value for a slot prop
     }
     return (
       <Button onClick={() => setView(otherView)} 
@@ -68,67 +72,36 @@ function CrittersPanelContent({ setActivePanel }) {
 
   const closeButton = () => {
     let clickFunction, text;
-    console.log({ view, selectedCritter });
     if (view === "companions" && selectedCritter) {
-      // on CritterInfoSection -> go back to the critters/companions list
       clickFunction = () => setSelectedCritter(null);
       text = "Back";
     } else if (view === "critters") {
-      // on the base landing menu -> close the whole panel
       clickFunction = () => setActivePanel(null);
       text = "Close";
     } else {
-      // on companions/critterdex (no selection) -> go back to menu
       clickFunction = () => setView("critters");
       text = "Back";
     }
 
     return (
-      <Button
-            variant="menu"
-            onClick={clickFunction}
-          >
-            <Typography variant="h3">
-              {text}
-            </Typography>
-          </Button>
+      <Button variant="menu" onClick={clickFunction}>
+        <Typography variant="h3">{text}</Typography>
+      </Button>
     );
   }
 
   return (
-    <Box
-      sx={{
-        height: "100%",
-        width: "100%",
-        backgroundColor: "var(--cream)",
-        boxSizing: "border-box",
-        borderTopLeftRadius: 16,
-        borderBottomLeftRadius: 16,
-        pt: 4,
-        pb: 2,
-        pl: 4,
-        pr: 4,
-      }}
-    >
-      <Stack spacing={4} sx={{height: "100%", width: "100%", alignItems: "center"}}>
-        <Stack direction="row" sx={{width: "100%"}}>
-          <Typography variant="h2" sx={{color: "var(--red)"}}>{capitalize(view)}</Typography>
-          <Box sx={{flex: 1}}/>
-          <HelpButton />
-        </Stack>
+    <>
+      <PanelShell
+        title={capitalize(view)}
+        footerLeft={closeButton()}
+        footerRight={redirectButton()}
+      >
+        {viewComponent()}
+      </PanelShell>
 
-        <Box sx={{display: "flex", flex: 1, overflow: "hidden", width: "100%"}}>
-          {viewComponent()}
-        </Box>
-
-        <Stack direction="row" sx={{width: "100%", alignItems: "flex-end"}}>
-          {closeButton()}
-          <Box sx={{flex: 1}}/>
-          {redirectButton()}
-        </Stack>
-      </Stack>
       <PickCompanionBackdrop />
       <ReleaseConfirmModal />
-    </Box>
+    </>
   );
 }
