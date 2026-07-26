@@ -4,7 +4,10 @@ import { useNavigate } from "react-router-dom";
 
 import SplashscreenSkeleton from "../components/SplashscreenSkeleton";
 import UserAccountTextField from "../components/UserAccountTextField";
+import FirstCritterPicker from "../components/common/FirstCritterPicker"; // ★ ADDED
 import { useAuth } from "../context/AuthContext";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // ★ ADDED — needed for the direct catch/awaken calls below
 
 export default function SignUpScreen() {
   const navigate = useNavigate();
@@ -14,6 +17,7 @@ export default function SignUpScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [selectedSpeciesId, setSelectedSpeciesId] = useState(null); // ★ ADDED
   const [error, setError] = useState("");
 
   const handleSignUp = async () => {
@@ -24,13 +28,39 @@ export default function SignUpScreen() {
       return;
     }
 
-    // ★ CHANGED — signUp now takes name too; the backend creates BOTH the
-    // user and profile in one call (with server-side rollback if the name's
-    // taken), so there's no separate createProfile step anymore.
     const authResult = await signUp(email, password, name);
     if (!authResult.success) {
       setError(authResult.error);
       return;
+    }
+
+    // ★ ADDED — give the new account its chosen starter critter,
+    // auto-companioned. Done as two direct fetch calls (not through
+    // CrittersContext) since CrittersProvider isn't mounted here — it's
+    // scoped inside CrittersPanel, not available app-wide. Best-effort:
+    // if this fails, the account still exists and is usable, so we don't
+    // block navigation over it — just log it for now.
+    if (selectedSpeciesId) {
+      try {
+        const catchRes = await fetch(`${API_BASE_URL}/api/critters`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authResult.token}`,
+          },
+          body: JSON.stringify({ speciesId: selectedSpeciesId }),
+        });
+
+        if (catchRes.ok) {
+          const newCritter = await catchRes.json();
+          await fetch(`${API_BASE_URL}/api/critters/${newCritter.id}/awaken`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${authResult.token}` },
+          });
+        }
+      } catch (err) {
+        console.warn("Couldn't assign starter critter:", err);
+      }
     }
 
     navigate("/home");
@@ -39,14 +69,11 @@ export default function SignUpScreen() {
   return (
     <SplashscreenSkeleton
       leftContent={
-        <Box
-          component="img"
-          src
-          alt="critter animation"
-          sx={{
-            flex: 1,
-            backgroundColor: "var(--cream)"
-          }}
+        // ★ CHANGED — was a bare <img> placeholder; now the starter-critter
+        // picker (artwork placeholder + 5 selectable critter boxes)
+        <FirstCritterPicker
+          selectedSpeciesId={selectedSpeciesId}
+          onSelect={setSelectedSpeciesId}
         />
       }
       rightContent={

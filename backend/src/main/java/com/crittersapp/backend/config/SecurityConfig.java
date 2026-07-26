@@ -31,13 +31,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                // CSRF protection matters for cookie-based sessions; this API
-                // is stateless and token-based, so it's not applicable here
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/health").permitAll()
+                        // ★ ADDED — the species catalog is global/shared
+                        // reference data, not tied to any user, and now
+                        // needs to be readable during sign-up (before
+                        // someone has a token) for the first-critter picker
+                        .requestMatchers("/api/critters/species").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

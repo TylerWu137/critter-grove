@@ -99,7 +99,7 @@ export function AuthProvider({ children }) {
       setToken(data.token);
       setCurrentUserId(data.userId);
       setCurrentUserEmail(data.email);
-      return { success: true, userId: data.userId };
+      return { success: true, userId: data.userId, token: data.token }; // ★ CHANGED — added token
     } catch {
       return { success: false, error: "Could not reach the server. Please try again." };
     }

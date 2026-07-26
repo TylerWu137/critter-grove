@@ -1,20 +1,90 @@
-import { Button, Typography } from "@mui/material";
+import { Button, Typography, Stack } from "@mui/material";
+import { useState } from "react";
+import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 
 import PanelShell from "../common/PanelShell";
+import PanelMenuShell from "../common/PanelMenuShell";
 import InProgressPlaceholder from "../common/InProgressPlaceholder";
 
+function capitalize(str) {
+  return str[0].toUpperCase() + str.slice(1);
+}
+
 export default function ShopPanel({ setActivePanel }) {
+  const [view, setView] = useState("shop");
+
+  const viewComponent = () => {
+    switch (view) {
+      case "shop":
+        // no separate "ShopMenuView.jsx" needed — PanelMenuShell is
+        // already fully generic, same as how CrittersPanel reuses it
+        // inline for its own landing case
+        return (
+          <PanelMenuShell
+            setView={setView}
+            description={"Spend your acorns, treats, and flowers on new critters and cozy decorations for your space."}
+            section1={"Critters"}
+            section2={"Decor"}
+          />
+        );
+      case "critters":
+        return <InProgressPlaceholder label="Shop — Critters" />;
+      case "decor":
+        return <InProgressPlaceholder label="Shop — Decor" />;
+    }
+  };
+
+  const redirectButton = () => {
+    let otherView, section;
+    switch (view) {
+      case "critters":
+        otherView = "decor"; section = "Decor";
+        break;
+      case "decor":
+        otherView = "critters"; section = "Critters";
+        break;
+      case "shop":
+        return null;
+    }
+    return (
+      <Button
+        onClick={() => setView(otherView)}
+        sx={{
+          backgroundColor: "transparent",
+          "&:hover": { backgroundColor: "transparent" },
+        }}
+      >
+        <Stack>
+          <Typography variant="h4" sx={{ color: "var(--red)" }}>{section}</Typography>
+          <ArrowRightAltIcon sx={{ color: "var(--red)", alignSelf: "flex-end"}} />
+        </Stack>
+      </Button>
+    );
+  };
+
+  const closeButton = () => {
+    let clickFunction, text;
+    if (view === "shop") {
+      clickFunction = () => setActivePanel(null);
+      text = "Close";
+    } else {
+      clickFunction = () => setView("shop");
+      text = "Back";
+    }
+    return (
+      <Button variant="menu" onClick={clickFunction}>
+        <Typography variant="h3">{text}</Typography>
+      </Button>
+    );
+  };
+
   return (
     <PanelShell
-      title="Shop"
-      footerLeft={
-        <Button variant="menu" onClick={() => setActivePanel(null)}>
-          <Typography variant="h3">Close</Typography>
-        </Button>
-      }
-      // no footerRight — Shop has no redirect target like Companions/CritterDex (yet)
+      title={capitalize(view)}
+      footerLeft={closeButton()}
+      footerRight={redirectButton()}
     >
-      <InProgressPlaceholder label="Shop" />
+      {viewComponent()}
     </PanelShell>
   );
 }
