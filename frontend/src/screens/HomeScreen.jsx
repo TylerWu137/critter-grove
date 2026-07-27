@@ -6,7 +6,7 @@ import PlayerTopBar from "../components/PlayerTopBar/PlayerTopBar";
 import TodayUpdates from "../components/TodayUpdates";
 import NavBar from "../components/common/NavBar";
 import CrittersPanel from "../components/critters/CrittersPanel";
-import ShopPanel from "../components/Shop/ShopPanel";
+import ShopPanel from "../components/shop/ShopPanel";
 
 
 export default function HomeScreen() {

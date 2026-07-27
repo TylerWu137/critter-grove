@@ -8,7 +8,7 @@ export default function DraggableCritterCard({ id }) {
   const { getCritterById, getCritterName, setSelectedCritter } = useCritters();
   // ★ CHANGED — added getCritterName
   const critter = getCritterById(id);
-  console.log("id:", id, "critter:", critter);
+  //console.log("id:", id, "critter:", critter);
 
   const { attributes, listeners, setNodeRef: setDragRef, transform, isDragging } =
     useDraggable({ id });

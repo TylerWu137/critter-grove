@@ -28,6 +28,12 @@ const theme = createTheme({
       fontSize: "1.5rem"
     },
 
+    h34: {
+      fontFamily: '"Fredoka", sans-serif',
+      fontWeight: 650,
+      fontSize: "1.4rem"
+    },
+
     h4: {
       fontFamily: '"Fredoka", sans-serif',
       fontWeight: 550,

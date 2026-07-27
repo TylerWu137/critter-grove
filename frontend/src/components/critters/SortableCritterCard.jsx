@@ -8,7 +8,6 @@ export default function SortableCritterCard({ id }) {
   const { getCritterById, getCritterName, setSelectedCritter, pickingCompanion, swapWithCompanion } = useCritters();
   // ★ CHANGED — added getCritterName
   const critter = getCritterById(id);
-  console.log("id:", id, "critter:", critter);
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id, disabled: pickingCompanion });

@@ -4,7 +4,7 @@ import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 
 import PanelShell from "../common/PanelShell";
 import PanelMenuShell from "../common/PanelMenuShell";
-import InProgressPlaceholder from "../common/InProgressPlaceholder";
+import ShopView from "./ShopView"
 
 function capitalize(str) {
   return str[0].toUpperCase() + str.slice(1);
@@ -28,9 +28,9 @@ export default function ShopPanel({ setActivePanel }) {
           />
         );
       case "critters":
-        return <InProgressPlaceholder label="Shop — Critters" />;
+        return <ShopView category={"critters"} />;
       case "decor":
-        return <InProgressPlaceholder label="Shop — Decor" />;
+        return <ShopView category={"decor"} />;
     }
   };
 
@@ -46,6 +46,7 @@ export default function ShopPanel({ setActivePanel }) {
       case "shop":
         return null;
     }
+    return <></>
     return (
       <Button
         onClick={() => setView(otherView)}
