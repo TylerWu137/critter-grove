@@ -3,19 +3,21 @@ package com.crittersapp.backend.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-// NOTE: not a @Document yet — plain in-memory object. When MongoDB is
-// wired up: @Document(collection = "quests"), @Id on id.
+@Document(collection = "quests")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Quest {
+    @Id
     private String id;
     private String userId;
-    private String type;     // "daily" | "epic" | "side"
-    private String tagId;    // nullable
+    private String type;
+    private String tagId;
     private String name;
-    private String date;     // nullable, "YYYY-MM-DD"
-    private String time;     // nullable, "HH:mm"
+    private String date;
+    private String time;
     private boolean isCompleted;
 }

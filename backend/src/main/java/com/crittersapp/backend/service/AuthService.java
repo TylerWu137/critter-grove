@@ -17,36 +17,30 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final ProfileService profileService; // ★ ADDED
+    private final ProfileService profileService;
 
     public AuthService(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
             JwtUtil jwtUtil,
-            ProfileService profileService // ★ ADDED
+            ProfileService profileService
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
-        this.profileService = profileService; // ★ ADDED
+        this.profileService = profileService;
     }
 
     public AuthResponse signUp(SignUpRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmailIgnoreCase(request.getEmail())) { // ★ CHANGED — added IgnoreCase
             throw new EmailAlreadyExistsException("That email is already registered.");
         }
 
         User user = new User();
         user.setEmail(request.getEmail());
-        user.setPasswordHash(passwordEncoder.encode(request.getPassword())); // never store the raw password
+        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
 
-        // ★ ADDED — compensating transaction: if profile creation fails
-        // (e.g. the requested name is already taken), delete the user we
-        // just created so we don't leave an orphaned account with no
-        // profile. Re-throwing the SAME exception preserves its type
-        // (NameAlreadyExistsException, etc.), so GlobalExceptionHandler
-        // still returns the correct, specific error to the client.
         try {
             profileService.createProfile(user.getId(), request.getName());
         } catch (RuntimeException ex) {
@@ -59,7 +53,7 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmailIgnoreCase(request.getEmail()) // ★ CHANGED — added IgnoreCase
                 .orElseThrow(() -> new InvalidCredentialsException("Incorrect email or password."));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
@@ -70,13 +64,9 @@ public class AuthService {
         return new AuthResponse(token, user.getId(), user.getEmail());
     }
 
-    // used by the /api/auth/me endpoint — lets the frontend verify a stored
-    // token is still valid and rehydrate "who's logged in" after a page refresh
     public AuthResponse getCurrentUserInfo(String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new InvalidCredentialsException("User not found."));
-        // no need to issue a new token here, just echo back identity info;
-        // reuse AuthResponse's shape so the frontend doesn't need a separate type
         return new AuthResponse(null, user.getId(), user.getEmail());
     }
 }

@@ -15,3 +15,8 @@ app:
 logging:
   level:
     com.crittersapp.backend: DEBUG
+
+spring:
+  data:
+    mongodb:
+      uri: ${MONGODB_URI}

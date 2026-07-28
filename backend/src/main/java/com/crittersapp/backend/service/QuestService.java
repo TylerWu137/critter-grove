@@ -26,11 +26,6 @@ public class QuestService {
         return new QuestResponse(q.getId(), q.getType(), q.getName(), q.getTagId(), q.getDate(), q.getTime(), q.isCompleted());
     }
 
-    // ★ THE OWNERSHIP CHECK PATTERN — every method that touches an existing
-    // quest by id goes through this first. Two-step on purpose: first check
-    // existence (404 if not found at all), THEN check ownership (403 if it
-    // exists but belongs to someone else). Collapsing these into one check
-    // would leak whether the id exists at all to an unauthorized caller.
     private Quest getOwnedQuestOrThrow(String userId, String questId) {
         Quest quest = questRepository.findById(questId)
                 .orElseThrow(() -> new ResourceNotFoundException("Quest not found."));
@@ -41,13 +36,6 @@ public class QuestService {
     }
 
     public List<QuestResponse> getQuestsForUser(String userId) {
-        // NOTE: returns ALL of this user's quests, unsorted/unfiltered by
-        // type or tag — same as before, the frontend still does its own
-        // getQuestsByType / tag-filtering / incomplete-then-completed
-        // sorting client-side after fetching this list. Not duplicating
-        // that logic here keeps this endpoint simple and keeps the
-        // migration mostly about "where does the data come from," not
-        // "rewrite all the display logic."
         return questRepository.findByUserId(userId).stream()
                 .map(this::toResponse)
                 .toList();
@@ -84,19 +72,18 @@ public class QuestService {
         quest.setCompleted(!quest.isCompleted());
         questRepository.save(quest);
         return toResponse(quest);
-        // NOTE: the "wait 1.5s before visually moving to the bottom" delay
-        // stays entirely a FRONTEND concern (setTimeout in QuestsContext) —
-        // the backend just flips the boolean immediately and returns the
-        // new state. Reordering-for-display was never a server concern.
     }
 
     public void deleteQuest(String userId, String questId) {
-        getOwnedQuestOrThrow(userId, questId); // throws if not found/not owned
+        getOwnedQuestOrThrow(userId, questId);
         questRepository.deleteById(questId);
     }
 
     public List<QuestTagResponse> getTagsForUser(String userId) {
-        return questTagRepository.findVisibleToUser(userId).stream()
+        // ★ CHANGED — was findVisibleToUser (a method that only existed on
+        // the old hand-written class); now calls the Spring Data derived
+        // query directly by its real name
+        return questTagRepository.findByUserIdIsNullOrUserId(userId).stream()
                 .map(t -> new QuestTagResponse(t.getId(), t.getName(), t.getColor()))
                 .toList();
     }

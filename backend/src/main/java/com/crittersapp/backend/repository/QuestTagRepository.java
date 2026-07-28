@@ -1,44 +1,14 @@
 package com.crittersapp.backend.repository;
 
 import com.crittersapp.backend.model.QuestTag;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
-@Repository
-public class QuestTagRepository {
-
-    private final ConcurrentHashMap<String, QuestTag> tags = new ConcurrentHashMap<>();
-
-    public QuestTagRepository() {
-        // seed the same default/global tags your frontend originally had
-        // in questTags.js — userId null means visible to everyone
-        save(new QuestTag(null, null, "school", "#7EA8BE"));
-        save(new QuestTag(null, null, "family", "#A8C3A0"));
-        save(new QuestTag(null, null, "art", "#E88C7D"));
-        save(new QuestTag(null, null, "nutrition", "#F2C14E"));
-    }
-
-    public QuestTag save(QuestTag tag) {
-        if (tag.getId() == null) {
-            tag.setId(UUID.randomUUID().toString());
-        }
-        tags.put(tag.getId(), tag);
-        return tag;
-    }
-
-    public Optional<QuestTag> findById(String id) {
-        return Optional.ofNullable(tags.get(id));
-    }
-
-    // global tags (userId == null) plus this user's own — matches what
-    // TagsSection should actually display
-    public List<QuestTag> findVisibleToUser(String userId) {
-        return tags.values().stream()
-                .filter(t -> t.getUserId() == null || t.getUserId().equals(userId))
-                .toList();
-    }
+public interface QuestTagRepository extends MongoRepository<QuestTag, String> {
+    // Spring Data DOES support this exact "field IS NULL OR field = X"
+    // pattern as a derived query name — reads as "userId is null OR
+    // userId equals the given userId", which is exactly "global tags OR
+    // this user's own tags"
+    List<QuestTag> findByUserIdIsNullOrUserId(String userId);
 }

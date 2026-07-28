@@ -29,7 +29,6 @@ public class CrittersService {
         return new OwnedCritterResponse(c.getId(), c.getSpeciesId(), c.getLevel(), c.getXp(), c.isCompanion());
     }
 
-    // same ownership-check pattern as QuestService.getOwnedQuestOrThrow
     private OwnedCritter getOwnedCritterOrThrow(String userId, String critterId) {
         OwnedCritter critter = ownedCritterRepository.findById(critterId)
                 .orElseThrow(() -> new ResourceNotFoundException("Critter not found."));
@@ -60,8 +59,6 @@ public class CrittersService {
         return toResponse(critter);
     }
 
-    // add foodAmt xp, cascading level-ups whenever xp exceeds level*10 —
-    // same logic as ProfileService.addXp, just applied to a critter instead
     public OwnedCritterResponse feedCritter(String userId, String critterId, int foodAmt) {
         OwnedCritter critter = getOwnedCritterOrThrow(userId, critterId);
 
@@ -78,15 +75,15 @@ public class CrittersService {
         return toResponse(critter);
     }
 
-    // direct add to companions, no swap partner needed — mirrors
-    // addToCompanions() in your frontend CrittersContext
     public OwnedCritterResponse awakenCritter(String userId, String critterId) {
         OwnedCritter critter = getOwnedCritterOrThrow(userId, critterId);
 
         if (critter.isCompanion()) {
-            return toResponse(critter); // already a companion, no-op
+            return toResponse(critter);
         }
-        if (ownedCritterRepository.countCompanions(userId) >= MAX_COMPANIONS) {
+        // ★ CHANGED — was countCompanions(userId); now the actual Spring
+        // Data derived query method name
+        if (ownedCritterRepository.countByUserIdAndIsCompanionTrue(userId) >= MAX_COMPANIONS) {
             throw new CompanionLimitReachedException("Companion roster is full (max " + MAX_COMPANIONS + ").");
         }
 
@@ -95,7 +92,6 @@ public class CrittersService {
         return toResponse(critter);
     }
 
-    // mirrors hibernateCompanion() — no swap needed
     public OwnedCritterResponse hibernateCritter(String userId, String critterId) {
         OwnedCritter critter = getOwnedCritterOrThrow(userId, critterId);
         critter.setCompanion(false);
@@ -103,7 +99,6 @@ public class CrittersService {
         return toResponse(critter);
     }
 
-    // mirrors swapWithCompanion() — flips both flags at once
     public OwnedCritterResponse swapCompanion(String userId, String critterId, String companionId) {
         OwnedCritter critter = getOwnedCritterOrThrow(userId, critterId);
         OwnedCritter companion = getOwnedCritterOrThrow(userId, companionId);
@@ -121,9 +116,8 @@ public class CrittersService {
         return toResponse(critter);
     }
 
-    // mirrors releaseCritter()
     public void releaseCritter(String userId, String critterId) {
-        getOwnedCritterOrThrow(userId, critterId); // throws if not found/not owned
+        getOwnedCritterOrThrow(userId, critterId);
         ownedCritterRepository.deleteById(critterId);
     }
 }

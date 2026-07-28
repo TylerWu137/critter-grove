@@ -33,8 +33,11 @@ public class ProfileService {
         );
     }
 
+    // ★ CHANGED — was findByUserId; Profile's @Id IS userId (same design
+    // as the in-memory version), so MongoRepository's built-in findById
+    // already does exactly this — no custom repository method needed
     private Profile getProfileOrThrow(String userId) {
-        return profileRepository.findByUserId(userId)
+        return profileRepository.findById(userId)
                 .orElseThrow(() -> new ProfileNotFoundException("No profile found for this user."));
     }
 
@@ -63,10 +66,10 @@ public class ProfileService {
     }
 
     public ProfileResponse createProfile(String userId, String name) {
-        if (profileRepository.existsByUserId(userId)) {
+        if (profileRepository.existsById(userId)) { // ★ CHANGED — was existsByUserId; built-in existsById works since userId IS the @Id
             throw new IllegalStateException("This user already has a profile.");
         }
-        if (profileRepository.existsByName(name)) {
+        if (profileRepository.existsByNameIgnoreCase(name)) { // ★ CHANGED — added IgnoreCase
             throw new NameAlreadyExistsException("That name is already taken.");
         }
 
@@ -80,7 +83,7 @@ public class ProfileService {
     }
 
     public ProfileResponse renameProfile(String userId, String newName) {
-        if (profileRepository.existsByName(newName)) {
+        if (profileRepository.existsByNameIgnoreCase(newName)) { // ★ CHANGED
             throw new NameAlreadyExistsException("That name is already taken.");
         }
 
@@ -90,8 +93,6 @@ public class ProfileService {
         return toResponse(profile);
     }
 
-    // add xp, cascading level-ups whenever xp exceeds level*10 — same logic
-    // your frontend's ProfileContext already had, reimplemented server-side
     public ProfileResponse addXp(String userId, int amount) {
         Profile profile = getProfileOrThrow(userId);
 
@@ -131,12 +132,6 @@ public class ProfileService {
         return toResponse(profile);
     }
 
-    // ★ Not exposed via its own controller endpoint yet — this is meant to
-    // be called directly (same-JVM method call) by a future QuestService or
-    // CrittersService when completing a quest / rescuing a critter grants
-    // both xp and currency at once, mirroring grantReward() in your
-    // frontend's ProfileContext. One atomic update, same reasoning as
-    // there: avoids two separate saves risking a half-applied reward.
     public ProfileResponse grantReward(String userId, int xp, long acorns, long treats, long flowers) {
         Profile profile = getProfileOrThrow(userId);
 

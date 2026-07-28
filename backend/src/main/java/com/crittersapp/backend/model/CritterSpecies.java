@@ -3,13 +3,15 @@ package com.crittersapp.backend.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-// Global/shared catalog data — NOT owned by any user, same reasoning as
-// your frontend's critterSpecies.js. No userId field.
+@Document(collection = "critter_species")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class CritterSpecies {
+    @Id
     private String id;
     private String name;
     private String rarity;
